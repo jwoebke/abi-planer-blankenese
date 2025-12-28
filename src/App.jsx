@@ -1,65 +1,31 @@
 import { useState } from 'react';
-import ProfileSelector from './components/ProfileSelector';
-import CoreSubjectSelector from './components/CoreSubjectSelector';
-import ExamSubjectSelector from './components/ExamSubjectSelector';
+import AbiturWizard from './components/AbiturWizard';
 import GradeMatrix from './components/GradeMatrix';
 import ResultsDashboard from './components/ResultsDashboard';
 import SaveLoadManager from './components/SaveLoadManager';
-import { db } from './lib/instantdb';
 import { PROFILES } from './data/profiles';
+import { ArrowLeft } from 'lucide-react';
 
 function App() {
-  const [step, setStep] = useState('profile'); // 'profile', 'core', 'exam', 'grades', 'results'
-  const [selectedProfile, setSelectedProfile] = useState(null);
-  const [coreSubjects, setCoreSubjects] = useState(null);
-  const [examSubjects, setExamSubjects] = useState(null);
+  const [step, setStep] = useState('wizard'); // 'wizard', 'grades', 'results'
+  const [wizardData, setWizardData] = useState(null); // { profile, coreSubjects, examSubjects, additionalSubjects }
   const [grades, setGrades] = useState(null);
   const [currentCalculationId, setCurrentCalculationId] = useState(null);
   const [currentResult, setCurrentResult] = useState(null);
 
-  const handleProfileSelect = (profile) => {
-    setSelectedProfile(profile);
-    setStep('core');
-  };
-
-  const handleCoreSubjectsComplete = (subjects) => {
-    setCoreSubjects(subjects);
-    setStep('exam');
-  };
-
-  const handleExamSubjectsComplete = (subjects) => {
-    setExamSubjects(subjects);
-    console.log('Profile:', selectedProfile);
-    console.log('Core Subjects:', coreSubjects);
-    console.log('Exam Subjects:', subjects);
+  const handleWizardComplete = (data) => {
+    setWizardData(data);
     setStep('grades');
   };
 
   const handleGradesComplete = (gradeData) => {
     setGrades(gradeData);
-    console.log('Grades:', gradeData);
     setStep('results');
   };
 
-  const handleBackToProfile = () => {
-    setSelectedProfile(null);
-    setCoreSubjects(null);
-    setExamSubjects(null);
+  const handleBackToWizard = () => {
+    setStep('wizard');
     setGrades(null);
-    setStep('profile');
-  };
-
-  const handleBackToCore = () => {
-    setCoreSubjects(null);
-    setExamSubjects(null);
-    setGrades(null);
-    setStep('core');
-  };
-
-  const handleBackToExam = () => {
-    setExamSubjects(null);
-    setGrades(null);
-    setStep('exam');
   };
 
   const handleBackToGrades = () => {
@@ -77,9 +43,12 @@ function App() {
     }
 
     // Restore all state
-    setSelectedProfile(profile);
-    setCoreSubjects(savedCalc.coreSubjects);
-    setExamSubjects(savedCalc.examSubjects);
+    setWizardData({
+      profile,
+      coreSubjects: savedCalc.coreSubjects,
+      examSubjects: savedCalc.examSubjects,
+      additionalSubjects: savedCalc.additionalSubjects || []
+    });
     setGrades(savedCalc.grades);
     setCurrentCalculationId(savedCalc.id);
 
@@ -91,92 +60,81 @@ function App() {
     setCurrentCalculationId(calculationId);
   };
 
-  const handleResultCalculated = (result, examResults) => {
-    // Update the current result and exam results for saving
+  const handleResultCalculated = (result) => {
     setCurrentResult(result);
   };
 
   const getCurrentCalculation = () => {
-    if (!selectedProfile || !coreSubjects || !examSubjects || !grades) {
+    if (!wizardData) {
       return null;
     }
 
     return {
-      profile: selectedProfile,
-      coreSubjects,
-      examSubjects,
-      grades,
-      examResults: null, // Will be set from ResultsDashboard
+      profile: wizardData.profile,
+      coreSubjects: wizardData.coreSubjects,
+      examSubjects: wizardData.examSubjects,
+      additionalSubjects: wizardData.additionalSubjects,
+      grades: grades,
       result: currentResult,
       calculationId: currentCalculationId,
     };
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-white">
       {/* Save/Load Manager - Always visible in header */}
-      {step !== 'profile' && (
-        <div className="fixed top-4 right-4 z-40">
-          <SaveLoadManager
-            currentCalculation={getCurrentCalculation()}
-            onLoad={handleLoad}
-            onSaveComplete={handleSaveComplete}
+      <div className="fixed top-4 right-4 z-50">
+        <SaveLoadManager
+          currentCalculation={getCurrentCalculation()}
+          onLoad={handleLoad}
+          onSaveComplete={handleSaveComplete}
+        />
+      </div>
+
+      {/* Main Content */}
+      {step === 'wizard' && (
+        <AbiturWizard
+          onComplete={handleWizardComplete}
+          initialData={wizardData}
+        />
+      )}
+
+      {step === 'grades' && wizardData && (
+        <div className="min-h-screen bg-white">
+          {/* Back Button */}
+          <div className="sticky top-0 z-20 bg-white border-b border-notion-gray-100 shadow-sm">
+            <div className="max-w-7xl mx-auto px-6 py-4">
+              <button
+                onClick={handleBackToWizard}
+                className="flex items-center gap-2 text-notion-gray-600 hover:text-notion-gray-900 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span className="text-sm font-medium">Zurück zur Fächerwahl</span>
+              </button>
+            </div>
+          </div>
+
+          <GradeMatrix
+            profile={wizardData.profile}
+            coreSubjects={wizardData.coreSubjects}
+            examSubjects={wizardData.examSubjects}
+            onComplete={handleGradesComplete}
+            onBack={handleBackToWizard}
           />
         </div>
       )}
 
-      {step === 'profile' && (
-        <div className="relative">
-          {/* Save/Load in profile view */}
-          <div className="absolute top-4 right-4 z-40">
-            <SaveLoadManager
-              currentCalculation={null}
-              onLoad={handleLoad}
-              onSaveComplete={handleSaveComplete}
-            />
-          </div>
-          <ProfileSelector onSelectProfile={handleProfileSelect} />
-        </div>
-      )}
-
-      {step === 'core' && selectedProfile && (
-        <CoreSubjectSelector
-          profile={selectedProfile}
-          onComplete={handleCoreSubjectsComplete}
-          onBack={handleBackToProfile}
-        />
-      )}
-
-      {step === 'exam' && selectedProfile && coreSubjects && (
-        <ExamSubjectSelector
-          profile={selectedProfile}
-          coreSubjects={coreSubjects}
-          onComplete={handleExamSubjectsComplete}
-          onBack={handleBackToCore}
-        />
-      )}
-
-      {step === 'grades' && selectedProfile && coreSubjects && examSubjects && (
-        <GradeMatrix
-          profile={selectedProfile}
-          coreSubjects={coreSubjects}
-          examSubjects={examSubjects}
-          onComplete={handleGradesComplete}
-          onBack={handleBackToExam}
-        />
-      )}
-
-      {step === 'results' && selectedProfile && coreSubjects && examSubjects && grades && (
+      {step === 'results' && wizardData && grades && (
         <ResultsDashboard
-          profile={selectedProfile}
-          coreSubjects={coreSubjects}
-          examSubjects={examSubjects}
+          profile={wizardData.profile}
+          coreSubjects={wizardData.coreSubjects}
+          examSubjects={wizardData.examSubjects}
           grades={grades}
           onBack={handleBackToGrades}
           onResultCalculated={handleResultCalculated}
         />
       )}
-    </>
+    </div>
   );
 }
 

@@ -1,35 +1,183 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import ProfileSelector from './components/ProfileSelector';
+import CoreSubjectSelector from './components/CoreSubjectSelector';
+import ExamSubjectSelector from './components/ExamSubjectSelector';
+import GradeMatrix from './components/GradeMatrix';
+import ResultsDashboard from './components/ResultsDashboard';
+import SaveLoadManager from './components/SaveLoadManager';
+import { db } from './lib/instantdb';
+import { PROFILES } from './data/profiles';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [step, setStep] = useState('profile'); // 'profile', 'core', 'exam', 'grades', 'results'
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [coreSubjects, setCoreSubjects] = useState(null);
+  const [examSubjects, setExamSubjects] = useState(null);
+  const [grades, setGrades] = useState(null);
+  const [currentCalculationId, setCurrentCalculationId] = useState(null);
+  const [currentResult, setCurrentResult] = useState(null);
+
+  const handleProfileSelect = (profile) => {
+    setSelectedProfile(profile);
+    setStep('core');
+  };
+
+  const handleCoreSubjectsComplete = (subjects) => {
+    setCoreSubjects(subjects);
+    setStep('exam');
+  };
+
+  const handleExamSubjectsComplete = (subjects) => {
+    setExamSubjects(subjects);
+    console.log('Profile:', selectedProfile);
+    console.log('Core Subjects:', coreSubjects);
+    console.log('Exam Subjects:', subjects);
+    setStep('grades');
+  };
+
+  const handleGradesComplete = (gradeData) => {
+    setGrades(gradeData);
+    console.log('Grades:', gradeData);
+    setStep('results');
+  };
+
+  const handleBackToProfile = () => {
+    setSelectedProfile(null);
+    setCoreSubjects(null);
+    setExamSubjects(null);
+    setGrades(null);
+    setStep('profile');
+  };
+
+  const handleBackToCore = () => {
+    setCoreSubjects(null);
+    setExamSubjects(null);
+    setGrades(null);
+    setStep('core');
+  };
+
+  const handleBackToExam = () => {
+    setExamSubjects(null);
+    setGrades(null);
+    setStep('exam');
+  };
+
+  const handleBackToGrades = () => {
+    setGrades(null);
+    setStep('grades');
+  };
+
+  const handleLoad = (savedCalc) => {
+    // Find the profile object from saved profileId
+    const profile = Object.values(PROFILES).find(p => p.id === savedCalc.profileId);
+
+    if (!profile) {
+      alert('Profil nicht gefunden. Die Berechnung könnte mit einer älteren Version erstellt worden sein.');
+      return;
+    }
+
+    // Restore all state
+    setSelectedProfile(profile);
+    setCoreSubjects(savedCalc.coreSubjects);
+    setExamSubjects(savedCalc.examSubjects);
+    setGrades(savedCalc.grades);
+    setCurrentCalculationId(savedCalc.id);
+
+    // Jump to results
+    setStep('results');
+  };
+
+  const handleSaveComplete = (calculationId) => {
+    setCurrentCalculationId(calculationId);
+  };
+
+  const handleResultCalculated = (result, examResults) => {
+    // Update the current result and exam results for saving
+    setCurrentResult(result);
+  };
+
+  const getCurrentCalculation = () => {
+    if (!selectedProfile || !coreSubjects || !examSubjects || !grades) {
+      return null;
+    }
+
+    return {
+      profile: selectedProfile,
+      coreSubjects,
+      examSubjects,
+      grades,
+      examResults: null, // Will be set from ResultsDashboard
+      result: currentResult,
+      calculationId: currentCalculationId,
+    };
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {/* Save/Load Manager - Always visible in header */}
+      {step !== 'profile' && (
+        <div className="fixed top-4 right-4 z-40">
+          <SaveLoadManager
+            currentCalculation={getCurrentCalculation()}
+            onLoad={handleLoad}
+            onSaveComplete={handleSaveComplete}
+          />
+        </div>
+      )}
+
+      {step === 'profile' && (
+        <div className="relative">
+          {/* Save/Load in profile view */}
+          <div className="absolute top-4 right-4 z-40">
+            <SaveLoadManager
+              currentCalculation={null}
+              onLoad={handleLoad}
+              onSaveComplete={handleSaveComplete}
+            />
+          </div>
+          <ProfileSelector onSelectProfile={handleProfileSelect} />
+        </div>
+      )}
+
+      {step === 'core' && selectedProfile && (
+        <CoreSubjectSelector
+          profile={selectedProfile}
+          onComplete={handleCoreSubjectsComplete}
+          onBack={handleBackToProfile}
+        />
+      )}
+
+      {step === 'exam' && selectedProfile && coreSubjects && (
+        <ExamSubjectSelector
+          profile={selectedProfile}
+          coreSubjects={coreSubjects}
+          onComplete={handleExamSubjectsComplete}
+          onBack={handleBackToCore}
+        />
+      )}
+
+      {step === 'grades' && selectedProfile && coreSubjects && examSubjects && (
+        <GradeMatrix
+          profile={selectedProfile}
+          coreSubjects={coreSubjects}
+          examSubjects={examSubjects}
+          onComplete={handleGradesComplete}
+          onBack={handleBackToExam}
+        />
+      )}
+
+      {step === 'results' && selectedProfile && coreSubjects && examSubjects && grades && (
+        <ResultsDashboard
+          profile={selectedProfile}
+          coreSubjects={coreSubjects}
+          examSubjects={examSubjects}
+          grades={grades}
+          onBack={handleBackToGrades}
+          onResultCalculated={handleResultCalculated}
+        />
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;

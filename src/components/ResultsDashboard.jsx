@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, TrendingUp, AlertCircle, CheckCircle2, Award, FileText } from 'lucide-react';
 import { calculateAbiturPrognose } from '../utils/abiturCalculation';
+import { POINTS_TO_GRADE } from '../data/profiles';
 
 const buildPredictedExamResults = (examSubjects, grades) => {
   const results = {};
@@ -105,6 +106,8 @@ export default function ResultsDashboard({
     };
   });
 
+  const gradeBand = POINTS_TO_GRADE.find((entry) => entry.grade === result.finalGrade);
+
   // Calculate percentage
   const percentage = ((result.totalPoints / result.maxPossible) * 100).toFixed(1);
 
@@ -153,8 +156,15 @@ export default function ResultsDashboard({
               <Award className="w-8 h-8" />
               <div>
                 <div className="text-xs uppercase tracking-wide text-notion-text-tertiary">Abiturnote</div>
-                <div className="text-3xl font-semibold text-notion-text">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-semibold text-notion-text">
                   {result.finalGrade !== null ? result.finalGrade.toFixed(1) : '—'}
+                  </span>
+                  {gradeBand && (
+                    <span className="text-xs text-notion-text-tertiary">
+                      ({gradeBand.min}-{gradeBand.max} Punkte)
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

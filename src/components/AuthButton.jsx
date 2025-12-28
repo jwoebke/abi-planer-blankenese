@@ -83,18 +83,15 @@ export default function AuthButton() {
 
   if (user) {
     return (
-      <div className="flex gap-px bg-tatami">
-        <button
-          type="button"
-          className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi text-xs uppercase tracking-wider font-light"
-        >
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-notion-text-secondary">
           {user.email || 'Konto'}
-        </button>
+        </span>
         <button
           type="button"
           onClick={handleSignOut}
           disabled={isWorking}
-          className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light disabled:opacity-60 disabled:cursor-not-allowed"
+          className="notion-btn notion-btn-secondary text-xs disabled:opacity-60 disabled:cursor-not-allowed"
         >
           Abmelden
         </button>
@@ -108,21 +105,23 @@ export default function AuthButton() {
         type="button"
         onClick={handleOpen}
         disabled={isLoading}
-        className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light disabled:opacity-60 disabled:cursor-not-allowed"
+        className="notion-btn notion-btn-secondary text-xs disabled:opacity-60 disabled:cursor-not-allowed"
       >
         Login
       </button>
 
       {showDialog && (
-        <div className="fixed inset-0 bg-sumi/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-washi border border-tatami max-w-md w-full">
-            <div className="p-8">
+        <div className="fixed inset-0 bg-notion-bg/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="notion-card max-w-md w-full">
+            <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-sm uppercase tracking-widest text-sumi font-light">Anmelden</h3>
+                <h3 className="text-sm uppercase tracking-widest text-notion-text">
+                  Anmelden
+                </h3>
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="text-sumi/40 hover:text-sumi transition-colors"
+                  className="notion-btn notion-btn-secondary text-xs px-2 py-1"
                 >
                   X
                 </button>
@@ -131,7 +130,7 @@ export default function AuthButton() {
               {step === 'email' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs text-sumi/60 mb-2 uppercase tracking-wide font-light">
+                    <label className="block text-xs text-notion-text-secondary mb-2 uppercase tracking-wide">
                       E-Mail
                     </label>
                     <input
@@ -139,19 +138,19 @@ export default function AuthButton() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@example.com"
-                      className="w-full px-0 py-2 border-0 border-b border-tatami bg-transparent focus:outline-none focus:border-indigo-dye transition-colors text-sumi"
+                      className="notion-input"
                     />
                   </div>
 
                   {error && (
-                    <div className="text-xs text-benizakura">{error}</div>
+                    <div className="text-xs text-notion-error">{error}</div>
                   )}
 
-                  <div className="flex gap-px bg-tatami">
+                  <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={handleClose}
-                      className="flex-1 px-4 py-3 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light"
+                      className="flex-1 notion-btn notion-btn-secondary text-xs"
                     >
                       Abbrechen
                     </button>
@@ -159,7 +158,7 @@ export default function AuthButton() {
                       type="button"
                       onClick={handleSendCode}
                       disabled={isWorking}
-                      className="flex-1 px-4 py-3 bg-indigo-dye text-white hover:bg-indigo-dye/90 transition-colors text-xs uppercase tracking-wider font-light disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="flex-1 notion-btn notion-btn-primary text-xs disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       Code senden
                     </button>
@@ -170,7 +169,7 @@ export default function AuthButton() {
               {step === 'code' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs text-sumi/60 mb-2 uppercase tracking-wide font-light">
+                    <label className="block text-xs text-notion-text-secondary mb-2 uppercase tracking-wide">
                       Code
                     </label>
                     <input
@@ -178,19 +177,19 @@ export default function AuthButton() {
                       value={code}
                       onChange={(e) => setCode(e.target.value)}
                       placeholder="123456"
-                      className="w-full px-0 py-2 border-0 border-b border-tatami bg-transparent focus:outline-none focus:border-indigo-dye transition-colors text-sumi"
+                      className="notion-input"
                     />
                   </div>
 
                   {error && (
-                    <div className="text-xs text-benizakura">{error}</div>
+                    <div className="text-xs text-notion-error">{error}</div>
                   )}
 
-                  <div className="flex gap-px bg-tatami">
+                  <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => setStep('email')}
-                      className="flex-1 px-4 py-3 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light"
+                      className="flex-1 notion-btn notion-btn-secondary text-xs"
                     >
                       Zurück
                     </button>
@@ -198,7 +197,7 @@ export default function AuthButton() {
                       type="button"
                       onClick={handleVerifyCode}
                       disabled={isWorking}
-                      className="flex-1 px-4 py-3 bg-indigo-dye text-white hover:bg-indigo-dye/90 transition-colors text-xs uppercase tracking-wider font-light disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="flex-1 notion-btn notion-btn-primary text-xs disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       Einloggen
                     </button>
@@ -208,7 +207,7 @@ export default function AuthButton() {
                     type="button"
                     onClick={handleSendCode}
                     disabled={isWorking}
-                    className="text-xs text-sumi/60 hover:text-sumi transition-colors"
+                    className="text-xs text-notion-text-secondary hover:text-notion-text transition-colors"
                   >
                     Code erneut senden
                   </button>

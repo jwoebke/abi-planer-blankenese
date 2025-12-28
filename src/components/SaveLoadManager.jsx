@@ -109,14 +109,14 @@ export default function SaveLoadManager({
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-px bg-tatami">
       {/* Save Button */}
       {currentCalculation && (
         <button
           onClick={() => setShowSaveDialog(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md"
+          className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light"
         >
-          <Save className="w-4 h-4" />
+          <Save className="w-3.5 h-3.5" strokeWidth={1.5} />
           Speichern
         </button>
       )}
@@ -124,53 +124,55 @@ export default function SaveLoadManager({
       {/* Load Button */}
       <button
         onClick={() => setShowLoadDialog(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+        className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light"
       >
-        <FolderOpen className="w-4 h-4" />
+        <FolderOpen className="w-3.5 h-3.5" strokeWidth={1.5} />
         Laden ({calculations.length})
       </button>
 
       {/* Save Dialog */}
       {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-slate-900">Berechnung speichern</h3>
-              <button
-                onClick={() => setShowSaveDialog(false)}
-                className="text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+        <div className="fixed inset-0 bg-sumi/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-washi border border-tatami max-w-md w-full">
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-sm uppercase tracking-widest text-sumi font-light">Speichern</h3>
+                <button
+                  onClick={() => setShowSaveDialog(false)}
+                  className="text-sumi/40 hover:text-sumi transition-colors"
+                >
+                  <X className="w-4 h-4" strokeWidth={1.5} />
+                </button>
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Name der Berechnung
-              </label>
-              <input
-                type="text"
-                value={saveName}
-                onChange={(e) => setSaveName(e.target.value)}
-                placeholder={`${currentCalculation?.profile?.name || 'Berechnung'} - ${new Date().toLocaleDateString('de-DE')}`}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                onKeyPress={(e) => e.key === 'Enter' && handleSave()}
-              />
-            </div>
+              <div className="mb-8">
+                <label className="block text-xs text-sumi/60 mb-3 uppercase tracking-wide font-light">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={saveName}
+                  onChange={(e) => setSaveName(e.target.value)}
+                  placeholder={`${currentCalculation?.profile?.name || 'Berechnung'} - ${new Date().toLocaleDateString('de-DE')}`}
+                  className="w-full px-0 py-2 border-0 border-b border-tatami bg-transparent focus:outline-none focus:border-indigo-dye transition-colors text-sumi"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSave()}
+                />
+              </div>
 
-            <div className="flex gap-2 justify-end">
-              <button
-                onClick={() => setShowSaveDialog(false)}
-                className="px-4 py-2 text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
-              >
-                Abbrechen
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Speichern
-              </button>
+              <div className="flex gap-px bg-tatami">
+                <button
+                  onClick={() => setShowSaveDialog(false)}
+                  className="flex-1 px-4 py-3 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="flex-1 px-4 py-3 bg-indigo-dye text-white hover:bg-indigo-dye/90 transition-colors text-xs uppercase tracking-wider font-light"
+                >
+                  Speichern
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -178,47 +180,51 @@ export default function SaveLoadManager({
 
       {/* Load Dialog */}
       {showLoadDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-slate-900">
-                Gespeicherte Berechnungen ({calculations.length})
-              </h3>
-              <button
-                onClick={() => setShowLoadDialog(false)}
-                className="text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-6 h-6" />
-              </button>
+        <div className="fixed inset-0 bg-sumi/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-washi border border-tatami max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div className="p-8 border-b border-tatami">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm uppercase tracking-widest text-sumi font-light">
+                  Gespeicherte Berechnungen ({calculations.length})
+                </h3>
+                <button
+                  onClick={() => setShowLoadDialog(false)}
+                  className="text-sumi/40 hover:text-sumi transition-colors"
+                >
+                  <X className="w-4 h-4" strokeWidth={1.5} />
+                </button>
+              </div>
             </div>
 
+            <div className="p-8 overflow-y-auto max-h-[calc(80vh-120px)]">
+
             {isLoading && (
-              <div className="text-center py-8 text-slate-600">
-                Lade gespeicherte Berechnungen...
+              <div className="text-center py-12 text-sumi/40 text-xs uppercase tracking-wider">
+                Laden...
               </div>
             )}
 
             {error && (
-              <div className="text-center py-8 text-red-600">
-                Fehler beim Laden: {error.message}
+              <div className="text-center py-12 text-benizakura text-xs">
+                Fehler: {error.message}
               </div>
             )}
 
             {!isLoading && !error && calculations.length === 0 && (
-              <div className="text-center py-8 text-slate-600">
-                Keine gespeicherten Berechnungen vorhanden.
+              <div className="text-center py-12 text-sumi/40 text-xs uppercase tracking-wider">
+                Keine Berechnungen vorhanden
               </div>
             )}
 
             {!isLoading && !error && calculations.length > 0 && (
-              <div className="space-y-3">
+              <div className="space-y-px bg-tatami">
                 {calculations
                   .sort((a, b) => b.updatedAt - a.updatedAt)
                   .map((calc) => (
                     <div
                       key={calc.id}
                       onClick={() => handleLoad(calc)}
-                      className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 cursor-pointer transition-colors"
+                      className="bg-washi p-6 hover:bg-white cursor-pointer transition-colors group"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -246,41 +252,45 @@ export default function SaveLoadManager({
                               </button>
                             </div>
                           ) : (
-                            <h4 className="font-semibold text-slate-900 mb-2">{calc.name}</h4>
+                            <h4 className="text-sm font-medium text-sumi mb-4 tracking-wide">{calc.name}</h4>
                           )}
 
-                          <div className="grid grid-cols-2 gap-2 text-sm text-slate-600">
-                            <div>Profil: {calc.profileName}</div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              {new Date(calc.updatedAt).toLocaleDateString('de-DE')}
+                          <div className="space-y-2 text-xs text-sumi/50 font-light">
+                            <div className="flex items-center justify-between">
+                              <span>{calc.profileName}</span>
+                              <span className="flex items-center gap-1.5">
+                                <Clock className="w-3 h-3" strokeWidth={1.5} />
+                                {new Date(calc.updatedAt).toLocaleDateString('de-DE')}
+                              </span>
                             </div>
-                            <div>
-                              Kernfächer: {calc.coreEA1}, {calc.coreEA2}, {calc.coreGA}
+                            <div className="pt-1 border-t border-tatami">
+                              {calc.coreEA1}, {calc.coreEA2}, {calc.coreGA}
                             </div>
                             {calc.finalGrade && (
-                              <div className="flex items-center gap-1 font-semibold text-blue-600">
-                                <Award className="w-3 h-3" />
-                                Note: {calc.finalGrade.toFixed(1)} ({calc.totalPoints} Pkt.)
+                              <div className="flex items-center gap-1.5 text-indigo-dye pt-1">
+                                <Award className="w-3 h-3" strokeWidth={1.5} />
+                                <span className="font-medium">{calc.finalGrade.toFixed(1)}</span>
+                                <span className="text-sumi/30">·</span>
+                                <span>{calc.totalPoints} Pkt.</span>
                               </div>
                             )}
                           </div>
                         </div>
 
-                        <div className="flex gap-1 ml-4">
+                        <div className="flex gap-1 ml-6 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={(e) => handleRename(calc.id, e)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                            className="p-2 text-sumi/40 hover:text-sumi transition-colors"
                             title="Umbenennen"
                           >
-                            <Edit2 className="w-4 h-4" />
+                            <Edit2 className="w-3.5 h-3.5" strokeWidth={1.5} />
                           </button>
                           <button
                             onClick={(e) => handleDelete(calc.id, e)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                            className="p-2 text-sumi/40 hover:text-benizakura transition-colors"
                             title="Löschen"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} />
                           </button>
                         </div>
                       </div>
@@ -288,6 +298,7 @@ export default function SaveLoadManager({
                   ))}
               </div>
             )}
+            </div>
           </div>
         </div>
       )}

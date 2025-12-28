@@ -112,7 +112,7 @@ export default function AuthButton() {
 
       {showDialog && (
         <div className="fixed inset-0 bg-notion-bg/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="notion-card max-w-md w-full">
+          <div className="notion-card max-w-xl w-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-sm uppercase tracking-widest text-notion-text">
@@ -138,7 +138,7 @@ export default function AuthButton() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@example.com"
-                      className="notion-input"
+                      className="notion-input min-w-[25ch]"
                     />
                   </div>
 
@@ -177,7 +177,7 @@ export default function AuthButton() {
                       value={code}
                       onChange={(e) => setCode(e.target.value)}
                       placeholder="123456"
-                      className="notion-input"
+                      className="notion-input min-w-[25ch]"
                     />
                   </div>
 

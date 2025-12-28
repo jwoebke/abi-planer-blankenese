@@ -19,25 +19,13 @@ export default function SaveLoadManager({
 
   const userId = user?.id ?? null;
 
-  const calculationsQuery = useMemo(() => {
-    if (!userId) {
-      return { calculations: { $: { where: { userId: '__none__' } } } };
-    }
-
-    return {
-      calculations: {
-        $: {
-          where: {
-            or: [{ userId }, { userId: null }],
-          },
-        },
-      },
-    };
-  }, [userId]);
-
-  // Query all saved calculations
-  const { isLoading, error, data } = db.useQuery(calculationsQuery);
-  const calculations = data?.calculations || [];
+  // Query all saved calculations; filter client-side to avoid InstantDB query coercion errors.
+  const { isLoading, error, data } = db.useQuery({ calculations: {} });
+  const calculations = useMemo(() => {
+    const list = data?.calculations || [];
+    if (!userId) return [];
+    return list.filter((calc) => calc.userId === userId || !calc.userId);
+  }, [data?.calculations, userId]);
 
   const handleSave = async () => {
     if (!canUseStorage) {

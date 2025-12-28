@@ -1,0 +1,21 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#f7f6f3"/>
+  <rect x="60" y="50" width="1160" height="620" rx="12" fill="#ffffff" stroke="#e3e2e0"/>
+
+  <text x="100" y="100" font-size="24" font-family="Arial, sans-serif" fill="#37352f">Detailansicht</text>
+  <text x="100" y="128" font-size="14" font-family="Arial, sans-serif" fill="#7a7a7a">Berechnung von Block I und Block II</text>
+
+  <rect x="100" y="170" width="1080" height="120" rx="8" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="100" y="170" width="1080" height="36" fill="#f7f6f3" stroke="#e3e2e0"/>
+  <text x="118" y="194" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">ERGEBNISSE</text>
+  <text x="118" y="232" font-size="13" font-family="Arial, sans-serif" fill="#37352f">Gesamtpunkte: 720</text>
+  <text x="118" y="256" font-size="13" font-family="Arial, sans-serif" fill="#37352f">Abiturnote: 1.9</text>
+
+  <rect x="100" y="320" width="520" height="300" rx="8" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="100" y="320" width="520" height="36" fill="#f7f6f3" stroke="#e3e2e0"/>
+  <text x="118" y="344" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">BLOCK I</text>
+
+  <rect x="660" y="320" width="520" height="300" rx="8" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="660" y="320" width="520" height="36" fill="#f7f6f3" stroke="#e3e2e0"/>
+  <text x="678" y="344" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">BLOCK II</text>
+</svg>

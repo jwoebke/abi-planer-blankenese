@@ -126,11 +126,11 @@ export function validateExamSubjects(examSubjects, profile, coreSubjects) {
 
   // Rule 1: Ein profilgebendes Fach muss Prüfungsfach sein
   const profilgebendeFaecher = profile.profilgebend.map(f => f.name);
-  const hasProfilgebendes = examSubjects.some(subject =>
+  const hasProfilgebendesFach = examSubjects.some(subject =>
     profilgebendeFaecher.includes(subject.name)
   );
 
-  if (!hasProfilgebendeFaecher) {
+  if (!hasProfilgebendesFach) {
     errors.push('Mindestens ein profilgebendes Fach muss als Prüfungsfach gewählt werden.');
   }
 
@@ -167,10 +167,9 @@ export function validateExamSubjects(examSubjects, profile, coreSubjects) {
   const coveredAufgabenfelder = new Set();
 
   examSubjects.forEach(subject => {
-    for (const [aufgabenfeld, subjects] of Object.entries(SUBJECTS_BY_AUFGABENFELD)) {
-      if (subjects.includes(subject.name)) {
-        coveredAufgabenfelder.add(aufgabenfeld);
-      }
+    const aufgabenfeld = getAufgabenfeldForSubject(subject.name);
+    if (aufgabenfeld) {
+      coveredAufgabenfelder.add(aufgabenfeld);
     }
   });
 
@@ -189,8 +188,16 @@ export function validateExamSubjects(examSubjects, profile, coreSubjects) {
  * Returns the Aufgabenfeld for a given subject
  */
 export function getAufgabenfeldForSubject(subjectName) {
+  const subjectAliases = {
+    'Theater (englisch bilingual)': 'Theater',
+    'Bildende Kunst oder Musik': 'Bildende Kunst',
+    'Spanisch oder Französisch': 'Spanisch',
+  };
+
+  const normalizedName = subjectAliases[subjectName] || subjectName;
+
   for (const [aufgabenfeld, subjects] of Object.entries(SUBJECTS_BY_AUFGABENFELD)) {
-    if (subjects.includes(subjectName)) {
+    if (subjects.includes(normalizedName)) {
       return aufgabenfeld;
     }
   }

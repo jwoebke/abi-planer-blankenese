@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import AbiturWizard from './components/AbiturWizard';
 import GradeMatrix from './components/GradeMatrix';
 import ResultsDashboard from './components/ResultsDashboard';
 import SaveLoadManager from './components/SaveLoadManager';
+import AuthButton from './components/AuthButton';
 import { PROFILES } from './data/profiles';
 import { ArrowLeft } from 'lucide-react';
 
@@ -10,27 +11,67 @@ function App() {
   const [step, setStep] = useState('wizard'); // 'wizard', 'grades', 'results'
   const [wizardData, setWizardData] = useState(null); // { profile, coreSubjects, examSubjects, additionalSubjects }
   const [grades, setGrades] = useState(null);
+  const [examResults, setExamResults] = useState(null);
   const [currentCalculationId, setCurrentCalculationId] = useState(null);
   const [currentResult, setCurrentResult] = useState(null);
 
+  const createEmptyAdditionalSubjects = () => ({
+    S1: [],
+    S2: [],
+    S3: [],
+    S4: [],
+  });
+
+  const normalizeAdditionalSubjects = (value) => {
+    if (!value) return createEmptyAdditionalSubjects();
+
+    const list = Array.isArray(value) ? value : Object.values(value).flat();
+    const unique = new Map();
+    list.forEach((subject) => {
+      if (subject?.name && !unique.has(subject.name)) {
+        unique.set(subject.name, subject);
+      }
+    });
+    const shared = Array.from(unique.values());
+
+    return {
+      S1: shared,
+      S2: shared,
+      S3: shared,
+      S4: shared,
+    };
+  };
+
   const handleWizardComplete = (data) => {
     setWizardData(data);
-    setStep('grades');
+    setGrades(data?.grades || {});
+    setExamResults(data?.examResults || {});
+    setCurrentResult(data?.result || null);
+    setStep('wizard');
+  };
+
+  const handleShowDetails = (data) => {
+    setWizardData(data);
+    setGrades(data?.grades || {});
+    setExamResults(data?.examResults || {});
+    setCurrentResult(data?.result || null);
+    setStep('results');
   };
 
   const handleGradesComplete = (gradeData) => {
     setGrades(gradeData);
+    setCurrentResult(null);
     setStep('results');
   };
 
   const handleBackToWizard = () => {
     setStep('wizard');
-    setGrades(null);
+    setCurrentResult(null);
   };
 
   const handleBackToGrades = () => {
-    setGrades(null);
-    setStep('grades');
+    setStep('wizard');
+    setCurrentResult(null);
   };
 
   const handleLoad = (savedCalc) => {
@@ -47,10 +88,14 @@ function App() {
       profile,
       coreSubjects: savedCalc.coreSubjects,
       examSubjects: savedCalc.examSubjects,
-      additionalSubjects: savedCalc.additionalSubjects || []
+      additionalSubjects: normalizeAdditionalSubjects(savedCalc.additionalSubjects),
+      examResults: savedCalc.examResults || {},
+      grades: savedCalc.grades || {},
     });
-    setGrades(savedCalc.grades);
+    setGrades(savedCalc.grades || {});
+    setExamResults(savedCalc.examResults || {});
     setCurrentCalculationId(savedCalc.id);
+    setCurrentResult(null);
 
     // Jump to results
     setStep('results');
@@ -60,20 +105,26 @@ function App() {
     setCurrentCalculationId(calculationId);
   };
 
-  const handleResultCalculated = (result) => {
+  const handleResultCalculated = useCallback((result, updatedExamResults) => {
     setCurrentResult(result);
-  };
+    if (updatedExamResults) {
+      setExamResults(updatedExamResults);
+    }
+  }, []);
 
   const getCurrentCalculation = () => {
     if (!wizardData) {
       return null;
     }
 
+    const resolvedExamResults = examResults ?? wizardData.examResults;
+
     return {
       profile: wizardData.profile,
       coreSubjects: wizardData.coreSubjects,
       examSubjects: wizardData.examSubjects,
       additionalSubjects: wizardData.additionalSubjects,
+      examResults: resolvedExamResults,
       grades: grades,
       result: currentResult,
       calculationId: currentCalculationId,
@@ -83,18 +134,20 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       {/* Save/Load Manager - Always visible in header */}
-      <div className="fixed top-4 right-4 z-50">
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
         <SaveLoadManager
           currentCalculation={getCurrentCalculation()}
           onLoad={handleLoad}
           onSaveComplete={handleSaveComplete}
         />
+        <AuthButton />
       </div>
 
       {/* Main Content */}
       {step === 'wizard' && (
         <AbiturWizard
           onComplete={handleWizardComplete}
+          onShowDetails={handleShowDetails}
           initialData={wizardData}
         />
       )}
@@ -118,6 +171,8 @@ function App() {
             profile={wizardData.profile}
             coreSubjects={wizardData.coreSubjects}
             examSubjects={wizardData.examSubjects}
+            additionalSubjects={wizardData.additionalSubjects}
+            initialGrades={grades}
             onComplete={handleGradesComplete}
             onBack={handleBackToWizard}
           />
@@ -126,10 +181,12 @@ function App() {
 
       {step === 'results' && wizardData && grades && (
         <ResultsDashboard
+          key={currentCalculationId || 'draft'}
           profile={wizardData.profile}
           coreSubjects={wizardData.coreSubjects}
           examSubjects={wizardData.examSubjects}
           grades={grades}
+          initialExamResults={examResults}
           onBack={handleBackToGrades}
           onResultCalculated={handleResultCalculated}
         />

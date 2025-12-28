@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Save, FolderOpen, Trash2, Edit2, X, Clock, Award } from 'lucide-react';
 import { db } from '../lib/instantdb';
 import { saveCalculation, deleteCalculation, renameCalculation, parseCalculation } from '../utils/persistence';
@@ -14,11 +14,36 @@ export default function SaveLoadManager({
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
 
+  const { user, isLoading: authLoading } = db.useAuth();
+  const canUseStorage = !!user && !authLoading;
+
+  const userId = user?.id ?? null;
+
+  const calculationsQuery = useMemo(() => {
+    if (!userId) {
+      return { calculations: { $: { where: { userId: '__none__' } } } };
+    }
+
+    return {
+      calculations: {
+        $: {
+          where: {
+            or: [{ userId }, { userId: null }],
+          },
+        },
+      },
+    };
+  }, [userId]);
+
   // Query all saved calculations
-  const { isLoading, error, data } = db.useQuery({ calculations: {} });
+  const { isLoading, error, data } = db.useQuery(calculationsQuery);
   const calculations = data?.calculations || [];
 
   const handleSave = async () => {
+    if (!canUseStorage) {
+      alert('Bitte melde dich an, um Berechnungen zu speichern.');
+      return;
+    }
     if (!saveName.trim()) {
       alert('Bitte gib einen Namen für die Berechnung ein.');
       return;
@@ -27,6 +52,8 @@ export default function SaveLoadManager({
     const result = await saveCalculation({
       ...currentCalculation,
       name: saveName,
+      userId: user.id,
+      userEmail: user.email || null,
     });
 
     if (result.success) {
@@ -37,21 +64,6 @@ export default function SaveLoadManager({
       }
     } else {
       alert(`Fehler beim Speichern: ${result.error}`);
-    }
-  };
-
-  const handleUpdate = async (calculationId) => {
-    const result = await saveCalculation({
-      ...currentCalculation,
-      calculationId,
-    });
-
-    if (result.success) {
-      if (onSaveComplete) {
-        onSaveComplete(result.id);
-      }
-    } else {
-      alert(`Fehler beim Aktualisieren: ${result.error}`);
     }
   };
 
@@ -114,7 +126,9 @@ export default function SaveLoadManager({
       {currentCalculation && (
         <button
           onClick={() => setShowSaveDialog(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light"
+          disabled={!canUseStorage}
+          title={!canUseStorage ? 'Bitte anmelden, um zu speichern.' : 'Speichern'}
+          className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <Save className="w-3.5 h-3.5" strokeWidth={1.5} />
           Speichern
@@ -124,10 +138,12 @@ export default function SaveLoadManager({
       {/* Load Button */}
       <button
         onClick={() => setShowLoadDialog(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light"
+        disabled={!canUseStorage}
+        title={!canUseStorage ? 'Bitte anmelden, um zu laden.' : 'Laden'}
+        className="flex items-center gap-2 px-4 py-2 bg-washi text-sumi hover:bg-white transition-colors text-xs uppercase tracking-wider font-light disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <FolderOpen className="w-3.5 h-3.5" strokeWidth={1.5} />
-        Laden ({calculations.length})
+        {canUseStorage ? `Laden (${calculations.length})` : 'Laden'}
       </button>
 
       {/* Save Dialog */}

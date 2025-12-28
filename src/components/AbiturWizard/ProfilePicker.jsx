@@ -36,28 +36,30 @@ export default function ProfilePicker({ selectedProfile, onSelectProfile }) {
                 key={profile.id}
                 onClick={() => onSelectProfile(profile)}
                 className={`
-                  relative text-left p-5
+                  relative text-left p-4
                   notion-card-interactive
                   ${isSelected ? 'notion-card-selected' : ''}
                 `}
               >
-                {/* Icon */}
-                <div className="w-10 h-10 rounded-md bg-notion-bg-secondary flex items-center justify-center mb-3">
-                  <Icon className="w-5 h-5 text-notion-text-secondary" strokeWidth={1.5} />
+                <div className="flex items-center gap-2 mb-2">
+                  {/* Icon */}
+                  <div className="w-9 h-9 rounded-md bg-notion-bg-secondary flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-notion-text-secondary" strokeWidth={1.5} />
+                  </div>
+
+                  {/* Profile Name */}
+                  <h3 className="font-semibold text-notion-text">
+                    {profile.name}
+                  </h3>
                 </div>
 
-                {/* Profile Name */}
-                <h3 className="font-semibold text-notion-text mb-2">
-                  {profile.name}
-                </h3>
-
                 {/* Description (truncated to 2 lines) */}
-                <p className="text-sm text-notion-text-secondary mb-3 line-clamp-2 leading-relaxed">
+                <p className="text-sm text-notion-text-secondary mb-2 line-clamp-2 leading-relaxed">
                   {profile.description}
                 </p>
 
                 {/* Profilgebende Fächer Preview */}
-                <div className="flex flex-wrap gap-1.5 mb-2">
+                <div className="flex flex-wrap gap-1.5 mb-1">
                   {profile.profilgebend.slice(0, 2).map((fach, idx) => (
                     <span
                       key={idx}
@@ -98,7 +100,7 @@ export default function ProfilePicker({ selectedProfile, onSelectProfile }) {
                   Profil ausgewählt: {selectedProfile.name}
                 </h4>
                 <p className="text-sm text-notion-text-secondary">
-                  Scrolle nach unten, um deine Kernfächer zu wählen.
+                  Wechsle zu den Kernfächern.
                 </p>
               </div>
             </div>

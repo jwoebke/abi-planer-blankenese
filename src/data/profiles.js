@@ -131,13 +131,13 @@ export const AUFGABENFELDER = {
 export const SUBJECTS_BY_AUFGABENFELD = {
   [AUFGABENFELDER.SPRACHLICH_KUENSTLERISCH]: [
     'Deutsch', 'Englisch', 'Französisch', 'Spanisch', 'Latein',
-    'Bildende Kunst', 'Musik', 'Theater'
+    'Bildende Kunst', 'Musik', 'Theater', 'Orchester'
   ],
   [AUFGABENFELDER.MATH_NATURWISS]: [
     'Mathematik', 'Physik', 'Chemie', 'Biologie', 'Informatik'
   ],
   [AUFGABENFELDER.GESELLSCHAFTSWISS]: [
-    'Religion', 'Philosophie', 'Geschichte', 'Geographie', 'PGW', 'Wirtschaft'
+    'Religion', 'Philosophie', 'Geschichte', 'Geographie', 'PGW', 'Wirtschaft', 'Seminar'
   ],
 };
 

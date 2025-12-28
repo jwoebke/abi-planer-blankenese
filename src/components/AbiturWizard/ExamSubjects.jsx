@@ -1,7 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Check, AlertCircle, Info } from 'lucide-react';
+import { validateExamSubjects } from '../../data/examConstraints';
 
-export default function ExamSubjects({ profile, coreSubjects, examSubjects, onExamSubjectsChange, isActive }) {
+const flattenAdditionalSubjects = (subjects) => {
+  if (Array.isArray(subjects)) {
+    return subjects;
+  }
+  if (subjects && typeof subjects === 'object') {
+    return Object.values(subjects).flat();
+  }
+  return [];
+};
+
+const expandSubjectName = (name) => {
+  if (!name) return [];
+  if (name.includes(' oder ')) {
+    return name.split(' oder ').map((part) => part.trim()).filter(Boolean);
+  }
+  return [name];
+};
+
+export default function ExamSubjects({
+  profile,
+  coreSubjects,
+  examSubjects,
+  additionalSubjects = {},
+  onExamSubjectsChange,
+  isActive
+}) {
   const [subjects, setSubjects] = useState(
     examSubjects || [
       { position: 1, name: '', examType: 'schriftlich', level: 'eA' },
@@ -19,16 +45,26 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
 
     // Add profile subjects
     profile.profilgebend.forEach(fach => {
-      availableSubjects.push({ name: fach.name, level: fach.level });
+      expandSubjectName(fach.name).forEach((name) => {
+        availableSubjects.push({ name, level: fach.level });
+      });
     });
     profile.profilbegleitend.forEach(fach => {
-      availableSubjects.push({ name: fach.name, level: fach.level });
+      expandSubjectName(fach.name).forEach((name) => {
+        availableSubjects.push({ name, level: fach.level });
+      });
     });
 
     // Add core subjects
     availableSubjects.push({ name: coreSubjects.coreEA1, level: 'eA' });
     availableSubjects.push({ name: coreSubjects.coreEA2, level: 'eA' });
     availableSubjects.push({ name: coreSubjects.coreGA, level: 'gA' });
+
+    // Add additional subjects
+    flattenAdditionalSubjects(additionalSubjects).forEach((subject) => {
+      if (!subject?.name) return;
+      availableSubjects.push({ name: subject.name, level: subject.level || 'gA' });
+    });
 
     // Remove duplicates
     const unique = availableSubjects.filter((subject, index, self) =>
@@ -56,41 +92,41 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
     ));
   };
 
-  const handleExamTypeChange = (position, examType) => {
-    setSubjects(prev => prev.map(exam =>
-      exam.position === position ? { ...exam, examType } : exam
-    ));
-  };
-
-  // Validate and update parent
-  useEffect(() => {
-    const filledSubjects = subjects.filter(s => s.name);
-
-    // Check if all 4 exam subjects are selected
-    if (filledSubjects.length === 4) {
-      // Basic validation: all different subjects
-      const uniqueNames = new Set(filledSubjects.map(s => s.name));
-      if (uniqueNames.size === 4) {
-        onExamSubjectsChange(subjects);
-        return;
-      }
+  const validation = useMemo(() => {
+    if (!profile || !coreSubjects) {
+      return { valid: false, errors: [], warnings: [] };
     }
 
-    onExamSubjectsChange(null);
-  }, [subjects, onExamSubjectsChange]);
+    const allSelected = subjects.every((s) => s.name);
+    if (!allSelected) {
+      return {
+        valid: false,
+        errors: ['Bitte wähle alle 4 Prüfungsfächer aus.'],
+        warnings: [],
+      };
+    }
 
-  const isComplete = subjects.every(s => s.name);
+    return validateExamSubjects(subjects, profile, coreSubjects);
+  }, [subjects, profile, coreSubjects]);
+
+  // Update parent whenever the selection changes
+  useEffect(() => {
+    if (!profile || !coreSubjects) return;
+    onExamSubjectsChange(validation.valid ? subjects : null);
+  }, [subjects, profile, coreSubjects, onExamSubjectsChange, validation.valid]);
+
+  const isComplete = validation.valid;
 
   if (!isActive && !examSubjects) {
     return (
       <section className="py-8 px-6 bg-notion-bg-secondary opacity-60">
         <div className="max-w-7xl mx-auto">
-          <p className="notion-section-header">Schritt 3</p>
+          <p className="notion-section-header">Schritt 4</p>
           <h2 className="text-xl font-semibold text-notion-text mb-2">
             Prüfungsfächer wählen
           </h2>
           <p className="text-sm text-notion-text-secondary">
-            Wähle zuerst deine Kernfächer aus.
+            Wähle zuerst die weiteren Fächer aus.
           </p>
         </div>
       </section>
@@ -102,7 +138,7 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <p className="notion-section-header mb-2">Schritt 3</p>
+          <p className="notion-section-header mb-2">Schritt 4</p>
           <h2 className="text-xl font-semibold text-notion-text mb-2">
             Prüfungsfächer wählen
           </h2>
@@ -233,6 +269,20 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
           </div>
         </div>
 
+        {/* Validation Feedback */}
+        {validation.errors.length > 0 && (
+          <div className="mb-4 p-4 bg-notion-error-bg border border-notion-error rounded-lg">
+            <div className="flex gap-3">
+              <AlertCircle className="w-5 h-5 text-notion-error flex-shrink-0" />
+              <div className="text-sm text-notion-text space-y-1">
+                {validation.errors.map((error, idx) => (
+                  <p key={idx}>{error}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Success Message */}
         {isComplete && (
           <div className="p-4 bg-notion-success-bg border border-notion-success rounded-lg">
@@ -247,7 +297,7 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
                   Prüfungsfächer ausgewählt
                 </h4>
                 <p className="text-sm text-notion-text-secondary">
-                  Alle vier Prüfungsfächer wurden ausgewählt. Scrolle nach unten, um weitere Fächer hinzuzufügen.
+                  Alle vier Prüfungsfächer wurden ausgewählt. Du kannst mit der Noteneingabe fortfahren.
                 </p>
               </div>
             </div>

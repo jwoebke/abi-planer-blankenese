@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { ArrowLeft, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { validateExamSubjects, getAufgabenfeldForSubject, EXAM_VARIANTS } from '../data/examConstraints';
 import { AUFGABENFELDER } from '../data/profiles';
@@ -11,8 +11,13 @@ export default function ExamSubjectSelector({ profile, coreSubjects, onComplete,
     { position: 4, name: '', examType: 'mündlich', level: 'gA', format: 'klassisch' }
   ]);
 
-  const [validation, setValidation] = useState({ valid: false, errors: [], warnings: [] });
-  const [selectedVariant, setSelectedVariant] = useState(null);
+  const validation = useMemo(() => (
+    validateExamSubjects(
+      examSubjects.filter(s => s.name),
+      profile,
+      coreSubjects
+    )
+  ), [examSubjects, profile, coreSubjects]);
 
   // Available subjects from profile and core subjects
   const availableSubjects = [
@@ -27,16 +32,6 @@ export default function ExamSubjectSelector({ profile, coreSubjects, onComplete,
   const uniqueSubjects = availableSubjects.filter((subject, index, self) =>
     index === self.findIndex(s => s.name === subject.name)
   );
-
-  useEffect(() => {
-    // Validate whenever exam subjects change
-    const validation = validateExamSubjects(
-      examSubjects.filter(s => s.name),
-      profile,
-      coreSubjects
-    );
-    setValidation(validation);
-  }, [examSubjects, profile, coreSubjects]);
 
   const handleSubjectChange = (position, subjectName) => {
     const selectedSubject = uniqueSubjects.find(s => s.name === subjectName);

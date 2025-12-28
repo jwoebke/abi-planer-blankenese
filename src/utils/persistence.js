@@ -9,9 +9,12 @@ export async function saveCalculation({
   profile,
   coreSubjects,
   examSubjects,
+  additionalSubjects,
   grades,
   examResults,
   result,
+  userId = null,
+  userEmail = null,
   calculationId = null,
 }) {
   const timestamp = Date.now();
@@ -26,8 +29,11 @@ export async function saveCalculation({
     coreEA2: coreSubjects.coreEA2,
     coreGA: coreSubjects.coreGA,
     examSubjects: JSON.stringify(examSubjects),
+    additionalSubjects: JSON.stringify(additionalSubjects || {}),
     grades: JSON.stringify(grades),
     examResults: JSON.stringify(examResults || {}),
+    userId,
+    userEmail,
     createdAt: calculationId ? undefined : timestamp, // Only set on create
     updatedAt: timestamp,
     finalGrade: result?.finalGrade || null,
@@ -51,6 +57,30 @@ export async function saveCalculation({
  */
 export function parseCalculation(savedCalc) {
   try {
+    const normalizeAdditionalSubjects = (value) => {
+      if (!value) return { S1: [], S2: [], S3: [], S4: [] };
+
+      const list = Array.isArray(value) ? value : Object.values(value).flat();
+      const unique = new Map();
+      list.forEach((subject) => {
+        if (subject?.name && !unique.has(subject.name)) {
+          unique.set(subject.name, subject);
+        }
+      });
+      const shared = Array.from(unique.values());
+
+      return {
+        S1: shared,
+        S2: shared,
+        S3: shared,
+        S4: shared,
+      };
+    };
+
+    const parsedAdditionalSubjects = normalizeAdditionalSubjects(
+      JSON.parse(savedCalc.additionalSubjects || '{}')
+    );
+
     return {
       id: savedCalc.id,
       name: savedCalc.name,
@@ -62,8 +92,11 @@ export function parseCalculation(savedCalc) {
         coreGA: savedCalc.coreGA,
       },
       examSubjects: JSON.parse(savedCalc.examSubjects),
+      additionalSubjects: parsedAdditionalSubjects,
       grades: JSON.parse(savedCalc.grades),
       examResults: JSON.parse(savedCalc.examResults),
+      userId: savedCalc.userId,
+      userEmail: savedCalc.userEmail,
       createdAt: savedCalc.createdAt,
       updatedAt: savedCalc.updatedAt,
       finalGrade: savedCalc.finalGrade,

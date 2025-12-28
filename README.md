@@ -12,19 +12,25 @@ Eine moderne Web-App zur Prognose der Abiturnote für Schüler*innen des Gymnasi
 ### ✨ Kernfunktionen
 - **📚 Profilwahl**: Auswahl aus 5 Profilen (Humanities, Kosmopolit, Kultur!, Netzwerk Erde, Wissenschaft in Bewegung)
 - **🎓 Kernfach-Konfiguration**: Festlegung von zwei Kernfächern auf erhöhtem Niveau (eA) und einem auf grundlegendem Niveau (gA)
+- **🧩 Weitere Fächer**: Ergänzung aller weiteren belegten Fächer für S1-S4 (Auswahl gilt für alle Semester)
 - **📝 Prüfungsfächer-Auswahl**: Intelligente Validierung aller Hamburg-Abitur-Constraints
-- **📊 Noten-Matrix**: Übersichtliche Eingabe für alle 4 Semester (S1-S4)
-- **🤖 Auto-Prognose**: Automatische Fortschreibung bisheriger Noten basierend auf Durchschnitt
+- **📊 Noten-Tabelle**: Notion-Style Tabelle mit vier Semestern + Abiturprüfungskarte für die Punkte
+- **🤖 Auto-Prognose**: Fehlende Semesterwerte werden beim Rechnen mit gerundetem Durchschnitt gefüllt
 - **🧮 Optimierungsalgorithmus**: Automatische Auswahl der besten 32-40 Noten für Block I
-- **📈 Abiturberechnung**: Vollständige Berechnung von Block I, Block II und Gesamtqualifikation
-- **💾 Speichern & Laden**: Persistierung deiner Berechnungen mit InstantDB
+- **📈 Abiturberechnung**: Ergebnis-Karte mit Block I, Block II, Gesamtpunkten und Abiturnote
+- **💾 Speichern & Laden**: Persistierung mit InstantDB (Login über Magic Code)
 
 ### 🎨 Besondere Features
 - **Echtzeit-Validierung**: Sofortiges Feedback bei Regelverstößen
 - **Interaktive Szenarien**: Was-wäre-wenn Analyse durch anpassbare Prüfungsnoten
-- **Detaillierte Aufschlüsselung**: Transparente Darstellung aller Berechnungsschritte
+- **Detaillierte Aufschlüsselung**: Detailansicht der Berechnungsschritte
 - **Optimale Fächerauswahl**: Intelligenter Greedy-Algorithmus für beste Notenauswahl
 - **Responsive Design**: Funktioniert auf Desktop, Tablet und Mobile
+
+## 🖼️ Screenshots
+
+![Notentabelle und Abiturkarten](public/screenshots/overview.svg)
+![Detailansicht der Berechnung](public/screenshots/details.svg)
 
 ## 🚀 Tech Stack
 
@@ -50,7 +56,9 @@ Eine moderne Web-App zur Prognose der Abiturnote für Schüler*innen des Gymnasi
 - [x] Gesamtqualifikation und Notentabelle
 - [x] Warnungen bei Regelverstößen
 - [x] Ergebnis-Dashboard mit Visualisierung
-- [x] **Persistierung mit InstantDB (Speichern & Laden)**
+- [x] Persistierung mit InstantDB (Speichern & Laden)
+- [x] Login via Magic Code für persönliche Berechnungen
+- [x] Notion-Style Notentabelle mit Abiturprüfungskarte
 
 ### 📅 Geplante Erweiterungen (Version 2.0)
 
@@ -74,7 +82,6 @@ Eine moderne Web-App zur Prognose der Abiturnote für Schüler*innen des Gymnasi
 #### Fachliche Erweiterungen
 - [ ] **Wahlbereich-Konfiguration**: Integration zusätzlicher Wahlfächer
 - [ ] **Besondere Lernleistung (BLL)**: Integration der BLL in die Berechnung
-- [ ] **Seminarfach**: Support für Seminarfächer in verschiedenen Profilen
 - [ ] **Sprachdiplome**: Berücksichtigung von Sprachzertifikaten
 
 #### UI/UX Verbesserungen
@@ -108,6 +115,15 @@ npm run build
 # Production Build lokal testen
 npm run preview
 ```
+
+## 🚀 Deployment (Netlify)
+
+1. **Build command**: `npm run build`
+2. **Publish directory**: `dist`
+3. **Environment variables**:
+   - `VITE_INSTANT_APP_ID` (InstantDB App-ID aus der `.env`)
+4. **Node-Version**: 18+ empfohlen (Vite 7)
+5. **Optional**: Wenn die App unter einem Sub-Pfad liegt, `base` in `vite.config.js` setzen
 
 ## 📖 Abitur-Regelwerk
 
@@ -152,30 +168,33 @@ Die App basiert auf dem "Wegweiser zur Profiloberstufe" des Gymnasiums Blankenes
    - Deutsch (eA)
    - Mathematik (eA)
    - Englisch (gA)
-3. **Prüfungsfächer wählen**:
+3. **Weitere Fächer für S1-S4 ergänzen**:
+   - Alle zusätzlichen belegten Fächer wählen (Auswahl gilt für alle Semester)
+   - Die Auswahl kann später jederzeit geändert werden
+4. **Prüfungsfächer wählen**:
    - Biologie (schriftlich, eA) - profilgebend
    - Deutsch (schriftlich, eA)
    - Mathematik (schriftlich, gA)
    - Geschichte (mündlich, gA)
-4. **Noten eingeben**:
-   - Bisherige Noten eintragen
-   - "Prognose" für fehlende Semester nutzen
-5. **Ergebnis ansehen**:
-   - Automatische Berechnung
-   - Optimale Fächerauswahl
-   - Abiturnote und Punktzahl
-   - Detaillierte Aufschlüsselung
-6. **Berechnung speichern**:
-   - Klick auf "Speichern" in der oberen rechten Ecke
-   - Namen vergeben für späteres Wiederfinden
-   - Beliebig viele Szenarien speichern
+5. **Noten eingeben**:
+   - Semesternoten in der Tabelle eintragen
+   - Prüfungsnoten in der Abiturprüfungskarte ergänzen
+   - Änderungen sind jederzeit möglich
+6. **Ergebnis berechnen**:
+   - Berechnung starten, sobald alle Anforderungen erfüllt sind
+   - Bei Änderungen per Button neu berechnen
+   - Ergebnis zeigt optimale Fächerauswahl, Abiturnote und Punktzahl
+7. **Details ansehen & speichern**:
+   - Detailansicht für die Berechnungslogik öffnen
+   - Login oben rechts und Berechnung speichern
 
 ### Speichern & Laden
 
 Die App nutzt **InstantDB** für die Persistierung deiner Berechnungen:
 
-- **Speichern**: Klicke auf den "Speichern"-Button (oben rechts), vergib einen Namen und speichere deine aktuelle Berechnung
-- **Laden**: Klicke auf "Laden", um alle gespeicherten Berechnungen zu sehen und eine auszuwählen
+- **Login**: Oben rechts anmelden (Magic Code per E-Mail)
+- **Speichern**: Klick auf "Speichern", Namen vergeben und Berechnung sichern
+- **Laden**: Klick auf "Laden", um gespeicherte Berechnungen zu öffnen
 - **Verwalten**: In der Laden-Ansicht kannst du Berechnungen umbenennen oder löschen
 - **Mehrere Szenarien**: Speichere verschiedene Fächerkombinationen und vergleiche sie
 
@@ -184,24 +203,32 @@ Die Daten werden automatisch mit der InstantDB-Cloud synchronisiert und sind dau
 ## 🔧 Projektstruktur
 
 ```
-src/
-├── components/
-│   ├── ProfileSelector.jsx          # Profilwahl UI
-│   ├── CoreSubjectSelector.jsx      # Kernfach-Konfiguration
-│   ├── ExamSubjectSelector.jsx      # Prüfungsfach-Auswahl
-│   ├── GradeMatrix.jsx              # Noten-Eingabe mit Auto-Prognose
-│   ├── ResultsDashboard.jsx         # Ergebnis-Anzeige
-│   └── SaveLoadManager.jsx          # Speichern & Laden Dialog
-├── data/
-│   ├── profiles.js                  # Profildefinitionen & Konstanten
-│   └── examConstraints.js           # Validierungsregeln
-├── utils/
-│   ├── abiturCalculation.js         # Berechnungs-Engine
-│   └── persistence.js               # Speichern/Laden Funktionen
-├── lib/
-│   └── instantdb.js                 # InstantDB Setup
-├── App.jsx                          # Haupt-App mit Workflow
-└── main.jsx                         # React Entry Point
+.
+├── src/
+│   ├── components/
+│   │   ├── AbiturWizard/
+│   │   │   ├── index.jsx                # Wizard-Steuerung (Schritte 1-4)
+│   │   │   ├── ProfilePicker.jsx        # Profilwahl
+│   │   │   ├── CoreSubjects.jsx         # Kernfächer
+│   │   │   ├── AdditionalSubjects.jsx   # Weitere Fächer
+│   │   │   ├── ExamSubjects.jsx         # Prüfungsfächer
+│   │   │   └── SemesterMatrix.jsx       # Noten-Tabelle + Ergebnis/Abiturkarten
+│   │   ├── AuthButton.jsx               # Login via InstantDB Magic Code
+│   │   ├── ResultsDashboard.jsx         # Detailansicht der Berechnung
+│   │   ├── SaveLoadManager.jsx          # Speichern & Laden Dialoge
+│   │   └── ui/SubjectTag.jsx            # Notion-Style Tags
+│   ├── data/
+│   │   ├── profiles.js                  # Profildefinitionen & Konstanten
+│   │   └── examConstraints.js           # Validierungsregeln
+│   ├── utils/
+│   │   ├── abiturCalculation.js         # Berechnungs-Engine
+│   │   └── persistence.js               # Speichern/Laden Funktionen
+│   ├── lib/
+│   │   └── instantdb.js                 # InstantDB Setup
+│   ├── App.jsx                          # Haupt-App mit Workflow
+│   └── main.jsx                         # React Entry Point
+└── public/
+    └── screenshots/                     # README Screenshots
 ```
 
 ## 🧮 Algorithmus-Details
@@ -227,11 +254,11 @@ src/
 - Die App dient zur **Prognose** und ersetzt nicht die offizielle Berechnung durch die Schule
 - Alle Berechnungen basieren auf dem Wegweiser 2023 des Gymnasiums Blankenese
 - Bei Änderungen der Prüfungsordnung muss die App aktualisiert werden
-- Die `.env` Datei mit der InstantDB App-ID ist bereits vorhanden
+- Für Deployments (z.B. Netlify) muss `VITE_INSTANT_APP_ID` als Environment Variable gesetzt sein
 
 ## 🤝 Beitragen
 
-Dieses Projekt wurde mit Claude Code entwickelt. Verbesserungsvorschläge sind willkommen!
+Dieses Projekt wurde mit Claude Code und ChatGPT Codex entwickelt. Verbesserungsvorschläge sind willkommen!
 
 ## 📄 Lizenz
 
@@ -239,12 +266,12 @@ MIT License - Copyright (c) 2025
 
 ## 👨‍💻 Entwicklung
 
-Entwickelt mit **Claude Code** (Claude Sonnet 4.5) für das Gymnasium Blankenese, Hamburg.
+Entwickelt mit **ChatGPT Codex** und **Claude Code** (Claude Sonnet 4.5) für das Gymnasium Blankenese, Hamburg.
 
 ### Credits
 - **Regelwerk**: Gymnasium Blankenese "Wegweiser zur Profiloberstufe"
 - **Algorithmus-Konzept**: Gemini (Google)
-- **Implementierung**: Claude Code (Anthropic)
+- **Implementierung**: ChatGPT Codex (OpenAI) und Claude Code (Anthropic)
 - **Tech Stack**: React, Vite, Tailwind CSS, InstantDB
 
 ---

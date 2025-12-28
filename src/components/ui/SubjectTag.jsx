@@ -22,12 +22,14 @@ const SUBJECT_COLORS = {
   'Wirtschaft': 'orange',
   'Philosophie': 'purple',
   'Religion': 'brown',
+  'Seminar': 'gray',
 
   // Künstlerisch
   'Bildende Kunst': 'pink',
   'Musik': 'pink',
   'Theater': 'pink',
   'Theater (englisch bilingual)': 'pink',
+  'Orchester': 'pink',
 
   // Sport
   'Sport': 'red',
@@ -53,7 +55,8 @@ export default function SubjectTag({
   level,
   removable = false,
   onRemove,
-  className = ''
+  className = '',
+  truncateName = false
 }) {
   const colorKey = SUBJECT_COLORS[name] || SUBJECT_COLORS.default;
   const colorClass = COLOR_CLASSES[colorKey];
@@ -62,9 +65,10 @@ export default function SubjectTag({
     <span className={`
       notion-tag
       ${colorClass}
+      ${truncateName ? 'min-w-0 max-w-full overflow-hidden' : ''}
       ${className}
     `}>
-      <span>{name}</span>
+      <span className={truncateName ? 'truncate min-w-0 flex-1' : ''}>{name}</span>
       {level && (
         <span className="opacity-70 text-[0.7rem]">
           {level}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Check, AlertCircle } from 'lucide-react';
 import { CORE_SUBJECTS } from '../../data/profiles';
 
@@ -6,7 +6,6 @@ export default function CoreSubjects({ profile, coreSubjects, onCoreSubjectsChan
   const [coreEA1, setCoreEA1] = useState(coreSubjects?.coreEA1 || '');
   const [coreEA2, setCoreEA2] = useState(coreSubjects?.coreEA2 || '');
   const [coreGA, setCoreGA] = useState(coreSubjects?.coreGA || '');
-  const [errors, setErrors] = useState([]);
 
   // Determine available core subjects based on profile
   const availableCoreSubjects = profile?.id === 'kosmopolit'
@@ -23,32 +22,32 @@ export default function CoreSubjects({ profile, coreSubjects, onCoreSubjectsChan
         CORE_SUBJECTS.ENGLISCH,
       ];
 
-  // Validate and update parent whenever values change
-  useEffect(() => {
+  const validation = useMemo(() => {
     const newErrors = [];
+    const anySelected = coreEA1 || coreEA2 || coreGA;
 
-    // Check if all fields are filled
     if (!coreEA1 || !coreEA2 || !coreGA) {
-      if (coreEA1 || coreEA2 || coreGA) {
+      if (anySelected) {
         newErrors.push('Bitte wähle alle drei Kernfächer aus.');
       }
-      setErrors(newErrors);
-      onCoreSubjectsChange(null);
-      return;
+      return { errors: newErrors, isValid: false };
     }
 
-    // Check for duplicates
     if (coreEA1 === coreEA2 || coreEA1 === coreGA || coreEA2 === coreGA) {
       newErrors.push('Jedes Kernfach darf nur einmal gewählt werden.');
-      setErrors(newErrors);
-      onCoreSubjectsChange(null);
-      return;
+      return { errors: newErrors, isValid: false };
     }
 
-    // All valid
-    setErrors([]);
-    onCoreSubjectsChange({ coreEA1, coreEA2, coreGA });
-  }, [coreEA1, coreEA2, coreGA, onCoreSubjectsChange]);
+    return { errors: [], isValid: true };
+  }, [coreEA1, coreEA2, coreGA]);
+
+  useEffect(() => {
+    if (validation.isValid) {
+      onCoreSubjectsChange({ coreEA1, coreEA2, coreGA });
+    } else {
+      onCoreSubjectsChange(null);
+    }
+  }, [coreEA1, coreEA2, coreGA, onCoreSubjectsChange, validation.isValid]);
 
   const isSubjectDisabled = (subject, field) => {
     if (field === 'ea1') return subject === coreEA2 || subject === coreGA;
@@ -57,7 +56,8 @@ export default function CoreSubjects({ profile, coreSubjects, onCoreSubjectsChan
     return false;
   };
 
-  const isComplete = coreEA1 && coreEA2 && coreGA && errors.length === 0;
+  const errors = validation.errors;
+  const isComplete = validation.isValid;
 
   if (!isActive && !coreSubjects) {
     return (
@@ -193,7 +193,7 @@ export default function CoreSubjects({ profile, coreSubjects, onCoreSubjectsChan
                   Kernfächer ausgewählt
                 </h4>
                 <p className="text-sm text-notion-text-secondary">
-                  Scrolle nach unten, um deine Prüfungsfächer zu wählen.
+                  Wechsle zu den weiteren Fächern.
                 </p>
               </div>
             </div>

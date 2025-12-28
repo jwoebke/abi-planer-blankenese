@@ -8,7 +8,7 @@ import { POINTS_TO_GRADE } from '../data/profiles';
 /**
  * Determines if a subject/semester combination must be included in Block I
  */
-function isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects, profile) {
+function isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects) {
   // Rule 1: All exam subjects (all 4 semesters)
   const isExamSubject = examSubjects.some(exam => exam.name === subjectName);
   if (isExamSubject) return true;
@@ -59,20 +59,22 @@ function prepareGradesForCalculation(grades, examSubjects, coreSubjects, profile
     const isDouble = isDoubleWeighted(subjectName, examSubjects, coreSubjects, profile);
 
     ['S1', 'S2', 'S3', 'S4'].forEach(semester => {
-      const grade = subjectGrades[semester];
+      const grade = subjectGrades?.[semester];
+      if (!grade) return;
 
-      if (grade.points !== '') {
-        allGrades.push({
-          subject: subjectName,
-          semester,
-          points: parseFloat(grade.points),
-          isPrediction: grade.isPrediction,
-          isMandatory: isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects, profile),
-          isDouble,
-          // For display purposes
-          displayName: `${subjectName} ${semester}`
-        });
-      }
+      const points = parseFloat(grade.points);
+      if (grade.points === '' || !Number.isFinite(points)) return;
+
+      allGrades.push({
+        subject: subjectName,
+        semester,
+        points,
+        isPrediction: grade.isPrediction,
+        isMandatory: isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects),
+        isDouble,
+        // For display purposes
+        displayName: `${subjectName} ${semester}`
+      });
     });
   });
 
@@ -151,7 +153,9 @@ export function calculateOptimalBlockI(grades, examSubjects, coreSubjects, profi
 
   // Count grades under 5 points
   const gradesUnder5 = finalSelection.filter(g => g.points < 5).length;
-  const percentUnder5 = (gradesUnder5 / finalSelection.length) * 100;
+  const percentUnder5 = finalSelection.length
+    ? (gradesUnder5 / finalSelection.length) * 100
+    : 0;
 
   // Validation checks
   const warnings = [];
@@ -198,7 +202,7 @@ export function calculateBlockII(examSubjects, examResults) {
   let totalPoints = 0;
   const examDetails = [];
 
-  examSubjects.forEach((exam, index) => {
+  examSubjects.forEach((exam) => {
     const result = examResults?.[exam.name] || { points: 0, isPrediction: true };
     const weighted = result.points * 5;
 

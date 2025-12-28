@@ -1,0 +1,40 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#f7f6f3"/>
+  <rect x="60" y="50" width="1160" height="620" rx="12" fill="#ffffff" stroke="#e3e2e0"/>
+
+  <text x="100" y="100" font-size="24" font-family="Arial, sans-serif" fill="#37352f">Abiturnotenrechner</text>
+  <text x="100" y="128" font-size="14" font-family="Arial, sans-serif" fill="#7a7a7a">Notion-style Notentabelle und Abiturkarten</text>
+
+  <rect x="100" y="170" width="760" height="430" rx="8" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="100" y="170" width="760" height="36" fill="#f7f6f3" stroke="#e3e2e0"/>
+  <text x="118" y="194" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">FAECHER</text>
+  <text x="320" y="194" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">S1</text>
+  <text x="420" y="194" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">S2</text>
+  <text x="520" y="194" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">S3</text>
+  <text x="620" y="194" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">S4</text>
+
+  <rect x="100" y="206" width="760" height="54" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="100" y="260" width="760" height="54" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="100" y="314" width="760" height="54" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="100" y="368" width="760" height="54" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="100" y="422" width="760" height="54" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="100" y="476" width="760" height="54" fill="#ffffff" stroke="#e3e2e0"/>
+
+  <text x="118" y="238" font-size="12" font-family="Arial, sans-serif" fill="#37352f">Deutsch (eA)</text>
+  <text x="118" y="292" font-size="12" font-family="Arial, sans-serif" fill="#37352f">Mathematik (eA)</text>
+  <text x="118" y="346" font-size="12" font-family="Arial, sans-serif" fill="#37352f">Englisch (gA)</text>
+  <text x="118" y="400" font-size="12" font-family="Arial, sans-serif" fill="#37352f">Biologie</text>
+  <text x="118" y="454" font-size="12" font-family="Arial, sans-serif" fill="#37352f">Geschichte</text>
+  <text x="118" y="508" font-size="12" font-family="Arial, sans-serif" fill="#37352f">Sport</text>
+
+  <rect x="900" y="170" width="280" height="200" rx="8" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="900" y="170" width="280" height="36" fill="#f7f6f3" stroke="#e3e2e0"/>
+  <text x="920" y="194" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">ABITURPRUEFUNG</text>
+
+  <rect x="900" y="400" width="280" height="200" rx="8" fill="#ffffff" stroke="#e3e2e0"/>
+  <rect x="900" y="400" width="280" height="36" fill="#f7f6f3" stroke="#e3e2e0"/>
+  <text x="920" y="424" font-size="12" font-family="Arial, sans-serif" fill="#7a7a7a">ABITURNOTE</text>
+
+  <rect x="920" y="452" width="240" height="34" rx="6" fill="#2383e2"/>
+  <text x="990" y="474" font-size="12" font-family="Arial, sans-serif" fill="#ffffff">Berechnung starten</text>
+</svg>

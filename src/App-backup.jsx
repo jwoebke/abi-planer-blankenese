@@ -6,7 +6,6 @@ import ExamSubjectSelector from './components/ExamSubjectSelector';
 import GradeMatrix from './components/GradeMatrix';
 import ResultsDashboard from './components/ResultsDashboard';
 import SaveLoadManager from './components/SaveLoadManager';
-import { db } from './lib/instantdb';
 import { PROFILES } from './data/profiles';
 
 function App() {
@@ -86,7 +85,7 @@ function App() {
     setCurrentCalculationId(calculationId);
   };
 
-  const handleResultCalculated = (result, examResults) => {
+  const handleResultCalculated = (result) => {
     setCurrentResult(result);
   };
 

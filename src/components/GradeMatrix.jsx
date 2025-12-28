@@ -1,51 +1,138 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, TrendingUp, RefreshCw, Save } from 'lucide-react';
 import { POINTS_SCALE } from '../data/profiles';
 
-export default function GradeMatrix({ profile, coreSubjects, examSubjects, onComplete, onBack }) {
-  // Combine all subjects
-  const allSubjects = [
-    { name: coreSubjects.coreEA1, level: 'eA', role: 'Kernfach', isExam: examSubjects.some(e => e.name === coreSubjects.coreEA1) },
-    { name: coreSubjects.coreEA2, level: 'eA', role: 'Kernfach', isExam: examSubjects.some(e => e.name === coreSubjects.coreEA2) },
-    { name: coreSubjects.coreGA, level: 'gA', role: 'Kernfach', isExam: examSubjects.some(e => e.name === coreSubjects.coreGA) },
-    ...profile.profilgebend.map(f => ({
-      name: f.name,
-      level: f.level,
-      role: 'Profilgebend',
-      isExam: examSubjects.some(e => e.name === f.name)
-    })),
-    ...profile.profilbegleitend.map(f => ({
-      name: f.name,
-      level: f.level,
-      role: 'Profilbegleitend',
-      isExam: examSubjects.some(e => e.name === f.name)
-    })),
-  ];
+const createEmptySemester = () => ({
+  points: '',
+  isPrediction: false,
+  isManual: false,
+});
 
-  // Remove duplicates
-  const uniqueSubjects = allSubjects.filter((subject, index, self) =>
-    index === self.findIndex(s => s.name === subject.name)
-  );
+const createEmptySubjectGrades = () => ({
+  S1: createEmptySemester(),
+  S2: createEmptySemester(),
+  S3: createEmptySemester(),
+  S4: createEmptySemester(),
+});
+
+const normalizeGrades = (subjects, existingGrades = {}) => {
+  const normalized = {};
+
+  subjects.forEach((subject) => {
+    const existing = existingGrades?.[subject.name];
+    normalized[subject.name] = {
+      S1: { ...createEmptySemester(), ...(existing?.S1 || {}) },
+      S2: { ...createEmptySemester(), ...(existing?.S2 || {}) },
+      S3: { ...createEmptySemester(), ...(existing?.S3 || {}) },
+      S4: { ...createEmptySemester(), ...(existing?.S4 || {}) },
+    };
+  });
+
+  return normalized;
+};
+
+export default function GradeMatrix({
+  profile,
+  coreSubjects,
+  examSubjects,
+  additionalSubjects = {},
+  initialGrades = null,
+  onComplete,
+  onBack
+}) {
+  const flattenAdditionalSubjects = (subjects) => {
+    if (Array.isArray(subjects)) {
+      return subjects;
+    }
+    if (subjects && typeof subjects === 'object') {
+      return Object.values(subjects).flat();
+    }
+    return [];
+  };
+
+  // Combine all subjects
+  const uniqueSubjects = useMemo(() => {
+    const examSubjectNames = new Set((examSubjects || []).map((exam) => exam.name));
+    const subjects = [];
+
+    if (coreSubjects) {
+      if (coreSubjects.coreEA1) {
+        subjects.push({
+          name: coreSubjects.coreEA1,
+          level: 'eA',
+          role: 'Kernfach',
+          isExam: examSubjectNames.has(coreSubjects.coreEA1),
+        });
+      }
+      if (coreSubjects.coreEA2) {
+        subjects.push({
+          name: coreSubjects.coreEA2,
+          level: 'eA',
+          role: 'Kernfach',
+          isExam: examSubjectNames.has(coreSubjects.coreEA2),
+        });
+      }
+      if (coreSubjects.coreGA) {
+        subjects.push({
+          name: coreSubjects.coreGA,
+          level: 'gA',
+          role: 'Kernfach',
+          isExam: examSubjectNames.has(coreSubjects.coreGA),
+        });
+      }
+    }
+
+    if (profile) {
+      profile.profilgebend.forEach((fach) => {
+        subjects.push({
+          name: fach.name,
+          level: fach.level,
+          role: 'Profilgebend',
+          isExam: examSubjectNames.has(fach.name),
+        });
+      });
+      profile.profilbegleitend.forEach((fach) => {
+        subjects.push({
+          name: fach.name,
+          level: fach.level,
+          role: 'Profilbegleitend',
+          isExam: examSubjectNames.has(fach.name),
+        });
+      });
+    }
+
+    flattenAdditionalSubjects(additionalSubjects).forEach((subject) => {
+      if (!subject?.name) return;
+      subjects.push({
+        name: subject.name,
+        level: subject.level || 'gA',
+        role: 'Zusatzfach',
+        isExam: examSubjectNames.has(subject.name),
+      });
+    });
+
+    const unique = subjects.filter((subject, index, self) =>
+      subject.name && index === self.findIndex(s => s.name === subject.name)
+    );
+
+    return unique;
+  }, [profile, coreSubjects, examSubjects, additionalSubjects]);
 
   // Initialize grades state
-  const [grades, setGrades] = useState(() => {
-    const initialGrades = {};
-    uniqueSubjects.forEach(subject => {
-      initialGrades[subject.name] = {
-        S1: { points: '', isPrediction: false, isManual: false },
-        S2: { points: '', isPrediction: false, isManual: false },
-        S3: { points: '', isPrediction: false, isManual: false },
-        S4: { points: '', isPrediction: false, isManual: false },
-      };
-    });
-    return initialGrades;
-  });
+  const [grades, setGrades] = useState(() =>
+    normalizeGrades(uniqueSubjects, initialGrades || undefined)
+  );
+
+  useEffect(() => {
+    setGrades(normalizeGrades(uniqueSubjects, initialGrades || undefined));
+  }, [uniqueSubjects, initialGrades]);
 
   const [predictionMode, setPredictionMode] = useState({}); // Track which subjects use auto-prediction
 
   // Calculate average for prediction
   const calculateAverage = (subjectName) => {
     const subjectGrades = grades[subjectName];
+    if (!subjectGrades) return null;
     const actualGrades = ['S1', 'S2', 'S3', 'S4']
       .map(sem => subjectGrades[sem])
       .filter(g => g.points !== '' && !g.isPrediction)
@@ -63,6 +150,7 @@ export default function GradeMatrix({ profile, coreSubjects, examSubjects, onCom
     if (avg === null) return;
 
     setGrades(prev => {
+      if (!prev[subjectName]) return prev;
       const newGrades = { ...prev };
       ['S1', 'S2', 'S3', 'S4'].forEach(sem => {
         if (newGrades[subjectName][sem].points === '' || newGrades[subjectName][sem].isPrediction) {
@@ -82,6 +170,7 @@ export default function GradeMatrix({ profile, coreSubjects, examSubjects, onCom
   // Clear predictions for a subject
   const clearPredictions = (subjectName) => {
     setGrades(prev => {
+      if (!prev[subjectName]) return prev;
       const newGrades = { ...prev };
       ['S1', 'S2', 'S3', 'S4'].forEach(sem => {
         if (newGrades[subjectName][sem].isPrediction) {
@@ -106,13 +195,13 @@ export default function GradeMatrix({ profile, coreSubjects, examSubjects, onCom
     setGrades(prev => ({
       ...prev,
       [subjectName]: {
-        ...prev[subjectName],
+        ...(prev[subjectName] || createEmptySubjectGrades()),
         [semester]: {
           points: value,
           isPrediction: false,
           isManual: true
         }
-      }
+      },
     }));
   };
 
@@ -222,8 +311,9 @@ export default function GradeMatrix({ profile, coreSubjects, examSubjects, onCom
                 <tbody className="divide-y divide-slate-200">
                   {uniqueSubjects.map((subject) => {
                     const avg = calculateAverage(subject.name);
+                    const subjectGrades = grades[subject.name] || createEmptySubjectGrades();
                     const hasGrades = ['S1', 'S2', 'S3', 'S4'].some(sem =>
-                      grades[subject.name][sem].points !== '' && !grades[subject.name][sem].isPrediction
+                      subjectGrades[sem].points !== '' && !subjectGrades[sem].isPrediction
                     );
 
                     return (
@@ -251,10 +341,10 @@ export default function GradeMatrix({ profile, coreSubjects, examSubjects, onCom
                         {['S1', 'S2', 'S3', 'S4'].map((sem) => (
                           <td key={sem} className="px-3 py-4">
                             <select
-                              value={grades[subject.name][sem].points}
+                              value={subjectGrades[sem].points}
                               onChange={(e) => handleGradeChange(subject.name, sem, e.target.value)}
                               className={`w-full px-2 py-1.5 text-center border rounded transition-all ${
-                                grades[subject.name][sem].isPrediction
+                                subjectGrades[sem].isPrediction
                                   ? 'bg-amber-50 border-amber-300 text-amber-900'
                                   : 'bg-white border-slate-300 text-slate-900'
                               } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}

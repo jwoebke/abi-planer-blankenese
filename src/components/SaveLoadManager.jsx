@@ -197,7 +197,7 @@ export default function SaveLoadManager({
       {/* Load Dialog */}
       {showLoadDialog && (
         <div className="fixed inset-0 bg-notion-bg/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="notion-card max-w-2xl w-full max-h-[80vh] overflow-hidden">
+          <div className="notion-card max-w-3xl w-full min-w-[20rem] max-h-[80vh] overflow-hidden">
             <div className="p-6 border-b border-notion-border">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm uppercase tracking-widest text-notion-text">

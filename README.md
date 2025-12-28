@@ -134,6 +134,8 @@ Die App basiert auf dem "Wegweiser zur Profiloberstufe" des Gymnasiums Blankenes
 - **Pflichteinbringung**:
   - Alle 4 Abiturprüfungsfächer (je 4 Semester)
   - Alle 3 Kernfächer (je 4 Semester)
+  - **Musisches Fach**: Genau ein Fach aus Bildende Kunst/Musik/Theater wird automatisch gewählt, alle 4 Semester werden eingebracht (beste Durchschnittsnote)
+  - **Musikpraktische Fächer** (Orchester/Chor/Popchor/Bigband): keine Pflicht; max. 3 Noten und nur zusätzlich zu den 32 Mindestnoten
   - Mind. ein Fach aus: Kunst/Musik/Theater
   - Mind. ein Fach aus: Geschichte/Geographie/PGW
   - Mind. ein Fach aus: Physik/Chemie/Biologie

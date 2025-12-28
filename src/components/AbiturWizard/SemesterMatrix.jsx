@@ -305,9 +305,7 @@ export default function SemesterMatrix({
               Gymnasium Blankenese
             </p>
             {profile && (
-              <span className="text-sm text-notion-text-secondary ml-auto">
-                Profil: <span className="font-medium text-notion-text">{profile.name}</span>
-              </span>
+              <span className="sr-only">Profil: {profile.name}</span>
             )}
           </div>
         </div>

@@ -5,10 +5,31 @@ import { POINTS_TO_GRADE } from '../data/profiles';
  * Based on Hamburg Abitur rules from the Wegweiser
  */
 
+const MUSIC_REQUIREMENT_SUBJECTS = new Set([
+  'Bildende Kunst',
+  'Musik',
+  'Theater',
+  'Theater (englisch bilingual)',
+  'Bildende Kunst oder Musik',
+]);
+
+const MUSIC_PRACTICAL_SUBJECTS = new Set([
+  'Orchester',
+  'Chor',
+  'Popchor',
+  'Bigband',
+]);
+
+const normalizeMusicRequirementName = (name) => {
+  if (name === 'Theater (englisch bilingual)') return 'Theater';
+  if (name === 'Bildende Kunst oder Musik') return 'Bildende Kunst';
+  return name;
+};
+
 /**
  * Determines if a subject/semester combination must be included in Block I
  */
-function isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects) {
+function isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects, mandatorySubjects) {
   // Rule 1: All exam subjects (all 4 semesters)
   const isExamSubject = examSubjects.some(exam => exam.name === subjectName);
   if (isExamSubject) return true;
@@ -20,6 +41,8 @@ function isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects) {
     coreSubjects.coreGA
   ].includes(subjectName);
   if (isCoreSubject) return true;
+
+  if (mandatorySubjects?.has(subjectName)) return true;
 
   // Note: Rules for Kunst/Musik/Theater, GesWi, NatWi are handled at subject level
   // We need at least one, but specific semesters are not mandatory
@@ -51,12 +74,13 @@ function isDoubleWeighted(subjectName, examSubjects, coreSubjects, profile) {
 /**
  * Prepares all grades with metadata for calculation
  */
-function prepareGradesForCalculation(grades, examSubjects, coreSubjects, profile) {
+function prepareGradesForCalculation(grades, examSubjects, coreSubjects, profile, mandatorySubjects) {
   const allGrades = [];
 
   Object.keys(grades).forEach(subjectName => {
     const subjectGrades = grades[subjectName];
     const isDouble = isDoubleWeighted(subjectName, examSubjects, coreSubjects, profile);
+    const isMusicPractical = MUSIC_PRACTICAL_SUBJECTS.has(subjectName);
 
     ['S1', 'S2', 'S3', 'S4'].forEach(semester => {
       const grade = subjectGrades?.[semester];
@@ -70,8 +94,9 @@ function prepareGradesForCalculation(grades, examSubjects, coreSubjects, profile
         semester,
         points,
         isPrediction: grade.isPrediction,
-        isMandatory: isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects),
+        isMandatory: isMandatoryGrade(subjectName, semester, examSubjects, coreSubjects, mandatorySubjects),
         isDouble,
+        isMusicPractical,
         // For display purposes
         displayName: `${subjectName} ${semester}`
       });
@@ -79,6 +104,38 @@ function prepareGradesForCalculation(grades, examSubjects, coreSubjects, profile
   });
 
   return allGrades;
+}
+
+function findBestMusicRequirementSubject(grades) {
+  const candidates = [];
+
+  Object.entries(grades || {}).forEach(([subjectName, subjectGrades]) => {
+    if (!subjectGrades) return;
+    const normalized = normalizeMusicRequirementName(subjectName);
+    if (!MUSIC_REQUIREMENT_SUBJECTS.has(subjectName) && !MUSIC_REQUIREMENT_SUBJECTS.has(normalized)) {
+      return;
+    }
+
+    const semesterPoints = ['S1', 'S2', 'S3', 'S4']
+      .map((semester) => subjectGrades?.[semester]?.points)
+      .filter((value) => value !== '' && value !== null && value !== undefined)
+      .map((value) => parseFloat(value))
+      .filter((value) => Number.isFinite(value));
+
+    if (semesterPoints.length === 0) return;
+
+    const avg = semesterPoints.reduce((sum, value) => sum + value, 0) / semesterPoints.length;
+    candidates.push({
+      subject: subjectName,
+      avg,
+      count: semesterPoints.length
+    });
+  });
+
+  if (candidates.length === 0) return null;
+
+  candidates.sort((a, b) => b.avg - a.avg);
+  return candidates[0];
 }
 
 /**
@@ -105,22 +162,30 @@ function calculateE(selectedGrades) {
  * Implements the greedy algorithm suggested by Gemini
  */
 export function calculateOptimalBlockI(grades, examSubjects, coreSubjects, profile) {
+  const bestMusicSubject = findBestMusicRequirementSubject(grades);
+  const mandatorySubjects = new Set();
+  if (bestMusicSubject?.subject) {
+    mandatorySubjects.add(bestMusicSubject.subject);
+  }
+
   // Step 1: Prepare all grades with metadata
-  const allGrades = prepareGradesForCalculation(grades, examSubjects, coreSubjects, profile);
+  const allGrades = prepareGradesForCalculation(grades, examSubjects, coreSubjects, profile, mandatorySubjects);
 
   // Step 2: Separate mandatory from optional grades
   const mandatoryGrades = allGrades.filter(g => g.isMandatory);
-  let optionalGrades = allGrades.filter(g => !g.isMandatory);
+  let optionalPractical = allGrades.filter(g => !g.isMandatory && g.isMusicPractical);
+  let optionalNonPractical = allGrades.filter(g => !g.isMandatory && !g.isMusicPractical);
 
   // Step 3: Sort optional grades descending by points
-  optionalGrades.sort((a, b) => b.points - a.points);
+  optionalNonPractical.sort((a, b) => b.points - a.points);
+  optionalPractical.sort((a, b) => b.points - a.points);
 
   // Step 4: Start with mandatory grades
   let currentSelection = [...mandatoryGrades];
 
   // Step 5: Fill up to minimum of 32 grades
-  while (currentSelection.length < 32 && optionalGrades.length > 0) {
-    currentSelection.push(optionalGrades.shift());
+  while (currentSelection.length < 32 && optionalNonPractical.length > 0) {
+    currentSelection.push(optionalNonPractical.shift());
   }
 
   // Step 6: Calculate initial E
@@ -128,8 +193,16 @@ export function calculateOptimalBlockI(grades, examSubjects, coreSubjects, profi
   let finalSelection = [...currentSelection];
 
   // Step 7: Iteratively try adding more grades (up to max 40)
-  while (currentSelection.length < 40 && optionalGrades.length > 0) {
-    const nextGrade = optionalGrades.shift();
+  const combinedOptional = [...optionalNonPractical, ...optionalPractical].sort(
+    (a, b) => b.points - a.points
+  );
+  let practicalCount = currentSelection.filter((grade) => grade.isMusicPractical).length;
+
+  while (currentSelection.length < 40 && combinedOptional.length > 0) {
+    const nextGrade = combinedOptional.shift();
+    if (nextGrade.isMusicPractical && practicalCount >= 3) {
+      continue;
+    }
     const tempSelection = [...currentSelection, nextGrade];
     const newE = calculateE(tempSelection);
 
@@ -137,6 +210,9 @@ export function calculateOptimalBlockI(grades, examSubjects, coreSubjects, profi
       bestE = newE;
       currentSelection = tempSelection;
       finalSelection = [...tempSelection];
+      if (nextGrade.isMusicPractical) {
+        practicalCount += 1;
+      }
     } else {
       // If adding this grade doesn't improve E, stop
       break;
@@ -175,6 +251,12 @@ export function calculateOptimalBlockI(grades, examSubjects, coreSubjects, profi
 
   if (Math.round(bestE) < 250 && Math.round(bestE) >= 200) {
     warnings.push('Block I: Knapp über der Mindestpunktzahl. Verbesserung empfohlen.');
+  }
+
+  if (!bestMusicSubject) {
+    errors.push('Block I: Es müssen 4 Semesternoten in Bildende Kunst, Musik oder Theater eingebracht werden.');
+  } else if (bestMusicSubject.count < 4) {
+    errors.push(`Block I: ${bestMusicSubject.subject} muss in allen 4 Semestern eingebracht werden.`);
   }
 
   return {

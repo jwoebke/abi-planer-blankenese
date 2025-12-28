@@ -120,20 +120,26 @@ export default function SaveLoadManager({
     setEditingName('');
   };
 
+  const canSave = !!currentCalculation?.profile;
+
   return (
     <div className="flex items-center gap-2">
       {/* Save Button */}
-      {currentCalculation && (
-        <button
-          onClick={() => setShowSaveDialog(true)}
-          disabled={!canUseStorage}
-          title={!canUseStorage ? 'Bitte anmelden, um zu speichern.' : 'Speichern'}
-          className="notion-btn notion-btn-secondary text-xs disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
-        >
-          <Save className="w-3.5 h-3.5" strokeWidth={1.5} />
-          Speichern
-        </button>
-      )}
+      <button
+        onClick={() => setShowSaveDialog(true)}
+        disabled={!canUseStorage || !canSave}
+        title={
+          !canUseStorage
+            ? 'Bitte anmelden, um zu speichern.'
+            : !canSave
+              ? 'Bitte zuerst eine Berechnung durchführen.'
+              : 'Speichern'
+        }
+        className="notion-btn notion-btn-secondary text-xs disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+      >
+        <Save className="w-3.5 h-3.5" strokeWidth={1.5} />
+        Speichern
+      </button>
 
       {/* Load Button */}
       <button
@@ -149,7 +155,7 @@ export default function SaveLoadManager({
       {/* Save Dialog */}
       {showSaveDialog && (
         <div className="fixed inset-0 bg-notion-bg/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="notion-card max-w-md w-full">
+          <div className="notion-card max-w-xl w-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-sm uppercase tracking-widest text-notion-text">Speichern</h3>
@@ -170,7 +176,7 @@ export default function SaveLoadManager({
                   value={saveName}
                   onChange={(e) => setSaveName(e.target.value)}
                   placeholder={`${currentCalculation?.profile?.name || 'Berechnung'} - ${new Date().toLocaleDateString('de-DE')}`}
-                  className="notion-input"
+                  className="notion-input min-w-[25ch]"
                   onKeyPress={(e) => e.key === 'Enter' && handleSave()}
                 />
               </div>

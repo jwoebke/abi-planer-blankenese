@@ -61,13 +61,13 @@ export default function CoreSubjects({ profile, coreSubjects, onCoreSubjectsChan
 
   if (!isActive && !coreSubjects) {
     return (
-      <section className="py-12 px-6 bg-notion-gray-50 opacity-50">
+      <section className="py-8 px-6 bg-notion-bg-secondary opacity-60">
         <div className="max-w-7xl mx-auto">
-          <div className="notion-section-header">Schritt 2</div>
-          <h2 className="text-2xl font-semibold text-notion-gray-900 mb-2">
+          <p className="notion-section-header">Schritt 2</p>
+          <h2 className="text-xl font-semibold text-notion-text mb-2">
             Kernfächer wählen
           </h2>
-          <p className="text-sm text-notion-gray-400">
+          <p className="text-sm text-notion-text-secondary">
             Wähle zuerst ein Profil aus.
           </p>
         </div>
@@ -76,99 +76,101 @@ export default function CoreSubjects({ profile, coreSubjects, onCoreSubjectsChan
   }
 
   return (
-    <section className={`py-12 px-6 ${isActive ? 'bg-white' : 'bg-notion-gray-50'}`}>
+    <section className={`py-8 px-6 ${isActive ? 'bg-notion-bg' : 'bg-notion-bg-secondary'}`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="notion-section-header">Schritt 2</div>
-          <h2 className="text-2xl font-semibold text-notion-gray-900 mb-2">
+        <div className="mb-6">
+          <p className="notion-section-header mb-2">Schritt 2</p>
+          <h2 className="text-xl font-semibold text-notion-text mb-2">
             Kernfächer wählen
           </h2>
-          <p className="text-sm text-notion-gray-400">
+          <p className="text-sm text-notion-text-secondary">
             Wähle zwei Kernfächer auf erhöhtem Anforderungsniveau (eA) und ein Kernfach auf grundlegendem Niveau (gA).
           </p>
         </div>
 
-        {/* Selection Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {/* Core eA 1 */}
-          <div>
-            <label className="block text-sm font-medium text-notion-gray-700 mb-2">
-              Kernfach 1 (eA)
-            </label>
-            <select
-              value={coreEA1}
-              onChange={(e) => setCoreEA1(e.target.value)}
-              className="notion-input"
-            >
-              <option value="">Wähle ein Fach</option>
-              {availableCoreSubjects.map(subject => (
-                <option
-                  key={subject}
-                  value={subject}
-                  disabled={isSubjectDisabled(subject, 'ea1')}
-                >
-                  {subject}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Dropdowns in einem Card-Container */}
+        <div className="notion-card p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Core eA 1 */}
+            <div>
+              <label className="block text-sm font-medium text-notion-text mb-2">
+                1. Kernfach (eA)
+              </label>
+              <select
+                value={coreEA1}
+                onChange={(e) => setCoreEA1(e.target.value)}
+                className="notion-input"
+              >
+                <option value="">Bitte wählen...</option>
+                {availableCoreSubjects.map(subject => (
+                  <option
+                    key={subject}
+                    value={subject}
+                    disabled={isSubjectDisabled(subject, 'ea1')}
+                  >
+                    {subject}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Core eA 2 */}
-          <div>
-            <label className="block text-sm font-medium text-notion-gray-700 mb-2">
-              Kernfach 2 (eA)
-            </label>
-            <select
-              value={coreEA2}
-              onChange={(e) => setCoreEA2(e.target.value)}
-              className="notion-input"
-            >
-              <option value="">Wähle ein Fach</option>
-              {availableCoreSubjects.map(subject => (
-                <option
-                  key={subject}
-                  value={subject}
-                  disabled={isSubjectDisabled(subject, 'ea2')}
-                >
-                  {subject}
-                </option>
-              ))}
-            </select>
-          </div>
+            {/* Core eA 2 */}
+            <div>
+              <label className="block text-sm font-medium text-notion-text mb-2">
+                2. Kernfach (eA)
+              </label>
+              <select
+                value={coreEA2}
+                onChange={(e) => setCoreEA2(e.target.value)}
+                className="notion-input"
+              >
+                <option value="">Bitte wählen...</option>
+                {availableCoreSubjects.map(subject => (
+                  <option
+                    key={subject}
+                    value={subject}
+                    disabled={isSubjectDisabled(subject, 'ea2')}
+                  >
+                    {subject}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Core gA */}
-          <div>
-            <label className="block text-sm font-medium text-notion-gray-700 mb-2">
-              Kernfach 3 (gA)
-            </label>
-            <select
-              value={coreGA}
-              onChange={(e) => setCoreGA(e.target.value)}
-              className="notion-input"
-            >
-              <option value="">Wähle ein Fach</option>
-              {availableCoreSubjects.map(subject => (
-                <option
-                  key={subject}
-                  value={subject}
-                  disabled={isSubjectDisabled(subject, 'ga')}
-                >
-                  {subject}
-                </option>
-              ))}
-            </select>
+            {/* Core gA */}
+            <div>
+              <label className="block text-sm font-medium text-notion-text mb-2">
+                3. Kernfach (gA)
+              </label>
+              <select
+                value={coreGA}
+                onChange={(e) => setCoreGA(e.target.value)}
+                className="notion-input"
+              >
+                <option value="">Bitte wählen...</option>
+                {availableCoreSubjects.map(subject => (
+                  <option
+                    key={subject}
+                    value={subject}
+                    disabled={isSubjectDisabled(subject, 'ga')}
+                  >
+                    {subject}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Error Messages */}
         {errors.length > 0 && (
-          <div className="mb-6 p-4 bg-notion-red-bg border border-notion-red rounded-md">
+          <div className="mb-4 p-4 bg-notion-error-bg border border-notion-error rounded-lg">
             <div className="flex gap-3">
-              <AlertCircle className="w-5 h-5 text-notion-red flex-shrink-0" />
+              <AlertCircle className="w-5 h-5 text-notion-error flex-shrink-0" />
               <div>
                 {errors.map((error, idx) => (
-                  <p key={idx} className="text-sm text-notion-gray-900">
+                  <p key={idx} className="text-sm text-notion-text">
                     {error}
                   </p>
                 ))}
@@ -179,18 +181,18 @@ export default function CoreSubjects({ profile, coreSubjects, onCoreSubjectsChan
 
         {/* Success Message */}
         {isComplete && (
-          <div className="p-4 bg-notion-green-bg border border-notion-green rounded-md">
+          <div className="p-4 bg-notion-success-bg border border-notion-success rounded-lg">
             <div className="flex gap-3">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 rounded-full bg-notion-green flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-notion-success flex items-center justify-center">
                   <Check className="w-5 h-5 text-white" strokeWidth={2.5} />
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-notion-gray-900 mb-1">
+                <h4 className="text-sm font-semibold text-notion-text mb-1">
                   Kernfächer ausgewählt
                 </h4>
-                <p className="text-xs text-notion-gray-600">
+                <p className="text-sm text-notion-text-secondary">
                   Scrolle nach unten, um deine Prüfungsfächer zu wählen.
                 </p>
               </div>
@@ -200,14 +202,14 @@ export default function CoreSubjects({ profile, coreSubjects, onCoreSubjectsChan
 
         {/* Info Box */}
         {profile?.kernfachBesonderheit && (
-          <div className="mt-6 p-4 bg-notion-blue-bg border border-notion-blue rounded-md">
+          <div className="mt-4 p-4 bg-notion-accent-bg border border-notion-accent rounded-lg">
             <div className="flex gap-2">
-              <AlertCircle className="w-5 h-5 text-notion-blue flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-notion-accent flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-semibold text-notion-gray-900 mb-1">
+                <h4 className="text-sm font-semibold text-notion-text mb-1">
                   Besonderheit für {profile.name}
                 </h4>
-                <p className="text-xs text-notion-gray-600">
+                <p className="text-sm text-notion-text-secondary">
                   {profile.kernfachBesonderheit}
                 </p>
               </div>

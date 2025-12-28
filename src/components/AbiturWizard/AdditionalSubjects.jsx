@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, X, Check, AlertCircle } from 'lucide-react';
+import SubjectTag from '../ui/SubjectTag';
 
 // Common additional subjects that students might want to take
 const ADDITIONAL_SUBJECT_OPTIONS = [
@@ -173,13 +174,13 @@ export default function AdditionalSubjects({
 
   if (!isActive) {
     return (
-      <section className="py-12 px-6 bg-notion-gray-50 opacity-50">
+      <section className="py-8 px-6 bg-notion-bg-secondary opacity-60">
         <div className="max-w-7xl mx-auto">
-          <div className="notion-section-header">Schritt 4</div>
-          <h2 className="text-2xl font-semibold text-notion-gray-900 mb-2">
+          <p className="notion-section-header">Schritt 4</p>
+          <h2 className="text-xl font-semibold text-notion-text mb-2">
             Weitere Fächer
           </h2>
-          <p className="text-sm text-notion-gray-400">
+          <p className="text-sm text-notion-text-secondary">
             Wähle zuerst deine Prüfungsfächer aus.
           </p>
         </div>
@@ -188,36 +189,36 @@ export default function AdditionalSubjects({
   }
 
   return (
-    <section className="py-12 px-6 bg-white border-t border-notion-gray-100">
+    <section className="py-8 px-6 bg-notion-bg border-t border-notion-border">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="notion-section-header">Schritt 4</div>
-          <h2 className="text-2xl font-semibold text-notion-gray-900 mb-2">
+        <div className="mb-6">
+          <p className="notion-section-header mb-2">Schritt 4</p>
+          <h2 className="text-xl font-semibold text-notion-text mb-2">
             Weitere Fächer ergänzen
           </h2>
-          <p className="text-sm text-notion-gray-400">
+          <p className="text-sm text-notion-text-secondary">
             Füge die fehlenden Fächer hinzu, um alle Belegverpflichtungen zu erfüllen.
           </p>
         </div>
 
         {/* Belegverpflichtungen Info Box */}
         {profile?.belegverpflichtungen && (
-          <div className="mb-6 p-4 bg-notion-blue-bg border border-notion-blue rounded-md">
-            <h4 className="text-sm font-semibold text-notion-gray-900 mb-2">
+          <div className="mb-6 p-4 bg-notion-accent-bg border border-notion-accent rounded-lg">
+            <h4 className="text-sm font-semibold text-notion-text mb-2">
               Belegverpflichtungen für {profile.name}
             </h4>
-            <ul className="text-xs text-notion-gray-700 space-y-1">
+            <ul className="text-sm text-notion-text-secondary space-y-1">
               {profile.belegverpflichtungen.map((requirement, idx) => {
                 const reqStatus = validationStatus.requirements?.[idx];
                 return (
                   <li key={idx} className="flex items-start gap-2">
                     {reqStatus?.met ? (
-                      <Check className="w-4 h-4 text-notion-green flex-shrink-0 mt-0.5" />
+                      <Check className="w-4 h-4 text-notion-success flex-shrink-0 mt-0.5" />
                     ) : (
-                      <AlertCircle className="w-4 h-4 text-notion-red flex-shrink-0 mt-0.5" />
+                      <AlertCircle className="w-4 h-4 text-notion-error flex-shrink-0 mt-0.5" />
                     )}
-                    <span className={reqStatus?.met ? 'text-notion-gray-600' : 'text-notion-gray-900 font-medium'}>
+                    <span className={reqStatus?.met ? 'text-notion-text-secondary' : 'text-notion-text font-medium'}>
                       {requirement}
                     </span>
                   </li>
@@ -230,28 +231,18 @@ export default function AdditionalSubjects({
         {/* Current Additional Subjects */}
         {additionalSubjects.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-notion-gray-700 mb-3">
+            <h3 className="text-sm font-medium text-notion-text mb-3">
               Hinzugefügte Fächer
             </h3>
             <div className="flex flex-wrap gap-2">
               {additionalSubjects.map((subject, idx) => (
-                <div
+                <SubjectTag
                   key={idx}
-                  className="inline-flex items-center gap-2 px-3 py-2 bg-notion-gray-50 border border-notion-gray-100 rounded-md"
-                >
-                  <span className="text-sm font-medium text-notion-gray-900">
-                    {subject.name}
-                  </span>
-                  <span className="text-xs text-notion-gray-400">
-                    {subject.level}
-                  </span>
-                  <button
-                    onClick={() => handleRemoveSubject(subject.name)}
-                    className="ml-1 text-notion-gray-400 hover:text-notion-red transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
+                  name={subject.name}
+                  level={subject.level}
+                  removable={true}
+                  onRemove={() => handleRemoveSubject(subject.name)}
+                />
               ))}
             </div>
           </div>
@@ -261,7 +252,7 @@ export default function AdditionalSubjects({
         {availableSubjects.length > 0 && !showAddDialog && (
           <button
             onClick={() => setShowAddDialog(true)}
-            className="notion-btn-secondary flex items-center gap-2"
+            className="notion-btn notion-btn-secondary flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Fach hinzufügen
@@ -270,8 +261,8 @@ export default function AdditionalSubjects({
 
         {/* Add Dialog */}
         {showAddDialog && availableSubjects.length > 0 && (
-          <div className="notion-card p-5 max-w-md">
-            <h4 className="text-sm font-semibold text-notion-gray-900 mb-4">
+          <div className="notion-card p-5 max-w-md mt-4">
+            <h4 className="text-sm font-semibold text-notion-text mb-4">
               Fach auswählen
             </h4>
             <select
@@ -291,7 +282,7 @@ export default function AdditionalSubjects({
               <button
                 onClick={handleAddSubject}
                 disabled={!selectedSubject}
-                className="notion-btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="notion-btn notion-btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Check className="w-4 h-4" />
                 Hinzufügen
@@ -301,7 +292,7 @@ export default function AdditionalSubjects({
                   setShowAddDialog(false);
                   setSelectedSubject('');
                 }}
-                className="notion-btn-secondary"
+                className="notion-btn notion-btn-secondary"
               >
                 Abbrechen
               </button>
@@ -311,7 +302,7 @@ export default function AdditionalSubjects({
 
         {/* No more subjects available */}
         {availableSubjects.length === 0 && !showAddDialog && (
-          <p className="text-sm text-notion-gray-400 italic">
+          <p className="text-sm text-notion-text-secondary italic">
             Alle verfügbaren Fächer wurden bereits ausgewählt.
           </p>
         )}
@@ -319,14 +310,14 @@ export default function AdditionalSubjects({
         {/* Validation Status */}
         <div className="mt-6">
           {!validationStatus.valid && validationStatus.message && (
-            <div className="p-4 bg-notion-red-bg border border-notion-red rounded-md">
+            <div className="p-4 bg-notion-error-bg border border-notion-error rounded-lg">
               <div className="flex gap-3">
-                <AlertCircle className="w-5 h-5 text-notion-red flex-shrink-0" />
+                <AlertCircle className="w-5 h-5 text-notion-error flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-notion-gray-900 mb-1">
+                  <p className="text-sm font-semibold text-notion-text mb-1">
                     Belegverpflichtungen nicht erfüllt
                   </p>
-                  <p className="text-xs text-notion-gray-700">
+                  <p className="text-sm text-notion-text-secondary">
                     {validationStatus.message}
                   </p>
                 </div>
@@ -335,18 +326,18 @@ export default function AdditionalSubjects({
           )}
 
           {validationStatus.valid && (
-            <div className="p-4 bg-notion-green-bg border border-notion-green rounded-md">
+            <div className="p-4 bg-notion-success-bg border border-notion-success rounded-lg">
               <div className="flex gap-3">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 rounded-full bg-notion-green flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-notion-success flex items-center justify-center">
                     <Check className="w-5 h-5 text-white" strokeWidth={2.5} />
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-notion-gray-900 mb-1">
+                  <h4 className="text-sm font-semibold text-notion-text mb-1">
                     Alle Pflichtfächer belegt
                   </h4>
-                  <p className="text-xs text-notion-gray-600">
+                  <p className="text-sm text-notion-text-secondary">
                     Du kannst nun mit der Noteneingabe fortfahren.
                   </p>
                 </div>

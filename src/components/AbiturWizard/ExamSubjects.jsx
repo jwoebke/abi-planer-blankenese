@@ -83,13 +83,13 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
 
   if (!isActive && !examSubjects) {
     return (
-      <section className="py-12 px-6 bg-notion-gray-50 opacity-50">
+      <section className="py-8 px-6 bg-notion-bg-secondary opacity-60">
         <div className="max-w-7xl mx-auto">
-          <div className="notion-section-header">Schritt 3</div>
-          <h2 className="text-2xl font-semibold text-notion-gray-900 mb-2">
+          <p className="notion-section-header">Schritt 3</p>
+          <h2 className="text-xl font-semibold text-notion-text mb-2">
             Prüfungsfächer wählen
           </h2>
-          <p className="text-sm text-notion-gray-400">
+          <p className="text-sm text-notion-text-secondary">
             Wähle zuerst deine Kernfächer aus.
           </p>
         </div>
@@ -98,28 +98,28 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
   }
 
   return (
-    <section className={`py-12 px-6 ${isActive ? 'bg-white' : 'bg-notion-gray-50'}`}>
+    <section className={`py-8 px-6 ${isActive ? 'bg-notion-bg' : 'bg-notion-bg-secondary'}`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="notion-section-header">Schritt 3</div>
-          <h2 className="text-2xl font-semibold text-notion-gray-900 mb-2">
+        <div className="mb-6">
+          <p className="notion-section-header mb-2">Schritt 3</p>
+          <h2 className="text-xl font-semibold text-notion-text mb-2">
             Prüfungsfächer wählen
           </h2>
-          <p className="text-sm text-notion-gray-400">
+          <p className="text-sm text-notion-text-secondary">
             Wähle 4 Prüfungsfächer: 3 schriftliche Prüfungen und 1 mündliche Prüfung. Mindestens 2 müssen auf eA-Niveau sein.
           </p>
         </div>
 
         {/* Exam Subject Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* Schriftlich 1 (eA) */}
           <div className="notion-card p-5">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-notion-gray-900">
+              <h4 className="text-sm font-semibold text-notion-text">
                 1. Prüfungsfach (Schriftlich)
               </h4>
-              <span className="notion-chip-blue">eA</span>
+              <span className="notion-tag bg-[rgba(211,229,239,1)] text-[rgb(24,51,71)]">eA</span>
             </div>
             <select
               value={subjects[0].name}
@@ -142,10 +142,10 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
           {/* Schriftlich 2 (eA) */}
           <div className="notion-card p-5">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-notion-gray-900">
+              <h4 className="text-sm font-semibold text-notion-text">
                 2. Prüfungsfach (Schriftlich)
               </h4>
-              <span className="notion-chip-blue">eA</span>
+              <span className="notion-tag bg-[rgba(211,229,239,1)] text-[rgb(24,51,71)]">eA</span>
             </div>
             <select
               value={subjects[1].name}
@@ -168,10 +168,10 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
           {/* Schriftlich 3 (gA) */}
           <div className="notion-card p-5">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-notion-gray-900">
+              <h4 className="text-sm font-semibold text-notion-text">
                 3. Prüfungsfach (Schriftlich)
               </h4>
-              <span className="notion-chip-green">gA</span>
+              <span className="notion-tag bg-[rgba(219,237,219,1)] text-[rgb(28,56,41)]">gA</span>
             </div>
             <select
               value={subjects[2].name}
@@ -194,10 +194,10 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
           {/* Mündlich (gA) */}
           <div className="notion-card p-5">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-notion-gray-900">
+              <h4 className="text-sm font-semibold text-notion-text">
                 4. Prüfungsfach (Mündlich)
               </h4>
-              <span className="notion-chip-green">gA</span>
+              <span className="notion-tag bg-[rgba(219,237,219,1)] text-[rgb(28,56,41)]">gA</span>
             </div>
             <select
               value={subjects[3].name}
@@ -219,10 +219,10 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
         </div>
 
         {/* Info Box */}
-        <div className="mb-6 p-4 bg-notion-blue-bg border border-notion-blue rounded-md">
+        <div className="mb-4 p-4 bg-notion-accent-bg border border-notion-accent rounded-lg">
           <div className="flex gap-3">
-            <Info className="w-5 h-5 text-notion-blue flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-notion-gray-700 space-y-1">
+            <Info className="w-5 h-5 text-notion-accent flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-notion-text-secondary space-y-1">
               <p><strong>Wichtig:</strong> Die Prüfungsfächer müssen alle drei Aufgabenfelder abdecken:</p>
               <ul className="list-disc list-inside ml-2 space-y-0.5">
                 <li>Sprachlich-künstlerisch (z.B. Deutsch, Englisch, Kunst)</li>
@@ -235,19 +235,19 @@ export default function ExamSubjects({ profile, coreSubjects, examSubjects, onEx
 
         {/* Success Message */}
         {isComplete && (
-          <div className="p-4 bg-notion-green-bg border border-notion-green rounded-md">
+          <div className="p-4 bg-notion-success-bg border border-notion-success rounded-lg">
             <div className="flex gap-3">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 rounded-full bg-notion-green flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-notion-success flex items-center justify-center">
                   <Check className="w-5 h-5 text-white" strokeWidth={2.5} />
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-notion-gray-900 mb-1">
+                <h4 className="text-sm font-semibold text-notion-text mb-1">
                   Prüfungsfächer ausgewählt
                 </h4>
-                <p className="text-xs text-notion-gray-600">
-                  Alle vier Prüfungsfächer wurden ausgewählt. Du kannst nun optional weitere Fächer hinzufügen.
+                <p className="text-sm text-notion-text-secondary">
+                  Alle vier Prüfungsfächer wurden ausgewählt. Scrolle nach unten, um weitere Fächer hinzuzufügen.
                 </p>
               </div>
             </div>

@@ -1,293 +1,259 @@
-/* Notion-Inspired Design System */
-
 @import "tailwindcss";
 
+/* Notion-Inspired Design System */
 @theme {
-  /* Notion Color Palette - Clean & Minimal */
-  --color-notion-white: #FFFFFF;
-  --color-notion-bg: #F7F6F3;         /* Main background */
-  --color-notion-gray-50: #F7F6F3;
-  --color-notion-gray-100: #E9E9E7;   /* Subtle borders */
-  --color-notion-gray-200: #DBDBD9;
-  --color-notion-gray-300: #B8B7B4;
-  --color-notion-gray-400: #9B9A97;   /* Secondary text */
-  --color-notion-gray-500: #787774;
-  --color-notion-gray-600: #5F5E5B;
-  --color-notion-gray-700: #464645;
-  --color-notion-gray-800: #2F2F2E;
-  --color-notion-gray-900: #1C1C1C;   /* Primary text */
+  /* Background Colors */
+  --color-notion-bg: #ffffff;
+  --color-notion-bg-secondary: #f7f6f3;
+  --color-notion-bg-tertiary: #f1f1ef;
+  --color-notion-bg-hover: rgba(55, 53, 47, 0.08);
 
-  --color-notion-blue: #2383E2;       /* Interactive elements */
-  --color-notion-blue-bg: #E8F3FC;    /* Blue tint background */
-  --color-notion-green: #0F7B6C;
-  --color-notion-green-bg: #DDEDEA;
-  --color-notion-red: #E03E3E;
-  --color-notion-red-bg: #FBE4E4;
-  --color-notion-yellow: #F59E0B;
-  --color-notion-yellow-bg: #FEF3C7;
+  /* Text Colors */
+  --color-notion-text: rgb(55, 53, 47);
+  --color-notion-text-secondary: rgba(55, 53, 47, 0.65);
+  --color-notion-text-tertiary: rgba(55, 53, 47, 0.5);
 
-  /* Typography - System Font Stack (Notion style) */
-  --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
-  --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  /* Border Colors */
+  --color-notion-border: rgba(55, 53, 47, 0.09);
+  --color-notion-border-strong: rgba(55, 53, 47, 0.16);
 
-  /* Font Sizes */
-  --font-size-xs: 0.75rem;      /* 12px */
-  --font-size-sm: 0.875rem;     /* 14px - Body text */
-  --font-size-base: 1rem;       /* 16px */
-  --font-size-lg: 1.125rem;     /* 18px */
-  --font-size-xl: 1.25rem;      /* 20px */
-  --font-size-2xl: 1.5rem;      /* 24px - Section headers */
-  --font-size-3xl: 1.875rem;    /* 30px */
-  --font-size-4xl: 2.25rem;     /* 36px - Page title */
+  /* Accent Color (Notion Blue) */
+  --color-notion-accent: rgb(35, 131, 226);
+  --color-notion-accent-light: rgba(35, 131, 226, 0.1);
+  --color-notion-accent-bg: rgba(35, 131, 226, 0.08);
 
-  /* Line Heights - Generous like Notion */
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.7;
+  /* Semantic Colors */
+  --color-notion-success: rgb(68, 131, 97);
+  --color-notion-success-bg: rgba(68, 131, 97, 0.1);
+  --color-notion-warning: rgb(203, 145, 47);
+  --color-notion-warning-bg: rgba(203, 145, 47, 0.1);
+  --color-notion-error: rgb(212, 76, 71);
+  --color-notion-error-bg: rgba(212, 76, 71, 0.1);
 
-  /* Spacing - Generous whitespace */
-  --spacing-0: 0;
-  --spacing-1: 0.25rem;   /* 4px */
-  --spacing-2: 0.5rem;    /* 8px */
-  --spacing-3: 0.75rem;   /* 12px */
-  --spacing-4: 1rem;      /* 16px */
-  --spacing-5: 1.25rem;   /* 20px */
-  --spacing-6: 1.5rem;    /* 24px */
-  --spacing-8: 2rem;      /* 32px */
-  --spacing-10: 2.5rem;   /* 40px */
-  --spacing-12: 3rem;     /* 48px */
-  --spacing-16: 4rem;     /* 64px */
+  /* Tag/Chip Colors (Notion-Style) */
+  --color-tag-gray: rgba(227, 226, 224, 0.5);
+  --color-tag-gray-text: rgb(50, 48, 44);
+  --color-tag-brown: rgba(238, 224, 218, 1);
+  --color-tag-brown-text: rgb(68, 42, 30);
+  --color-tag-orange: rgba(250, 222, 201, 1);
+  --color-tag-orange-text: rgb(73, 41, 14);
+  --color-tag-yellow: rgba(253, 236, 200, 1);
+  --color-tag-yellow-text: rgb(64, 44, 27);
+  --color-tag-green: rgba(219, 237, 219, 1);
+  --color-tag-green-text: rgb(28, 56, 41);
+  --color-tag-blue: rgba(211, 229, 239, 1);
+  --color-tag-blue-text: rgb(24, 51, 71);
+  --color-tag-purple: rgba(232, 222, 238, 1);
+  --color-tag-purple-text: rgb(65, 36, 84);
+  --color-tag-pink: rgba(245, 224, 233, 1);
+  --color-tag-pink-text: rgb(76, 35, 55);
+  --color-tag-red: rgba(255, 226, 221, 1);
+  --color-tag-red-text: rgb(93, 23, 21);
 
-  /* Border Radius - Subtle */
-  --radius-none: 0;
+  /* Spacing Scale */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Border Radius */
   --radius-sm: 3px;
   --radius-md: 6px;
   --radius-lg: 8px;
   --radius-xl: 12px;
 
-  /* Shadows - Very subtle */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.07);
+  /* Shadows (subtle like Notion) */
+  --shadow-sm: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 2px 4px;
+  --shadow-md: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px;
+  --shadow-hover: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px;
 
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-base: 200ms ease;
+  /* Typography */
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Courier, monospace;
 }
 
 :root {
-  font-family: var(--font-family-sans);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: var(--color-notion-gray-900);
-  background-color: var(--color-notion-white);
-  line-height: var(--line-height-normal);
+  color: var(--color-notion-text);
+  background-color: var(--color-notion-bg);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--color-notion-white);
-  font-size: var(--font-size-sm);
+  background-color: var(--color-notion-bg);
 }
 
 /* Base Typography */
 @layer base {
   h1 {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-size-4xl);
+    font-size: 2rem;
     font-weight: 700;
-    line-height: var(--line-height-tight);
-    color: var(--color-notion-gray-900);
-    margin: 0;
+    line-height: 1.2;
+    color: var(--color-notion-text);
   }
 
   h2 {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-size-2xl);
+    font-size: 1.5rem;
     font-weight: 600;
-    line-height: var(--line-height-tight);
-    color: var(--color-notion-gray-900);
-    margin: 0;
+    line-height: 1.3;
+    color: var(--color-notion-text);
   }
 
   h3 {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-size-xl);
+    font-size: 1.25rem;
     font-weight: 600;
-    line-height: var(--line-height-normal);
-    color: var(--color-notion-gray-900);
-    margin: 0;
+    line-height: 1.4;
+    color: var(--color-notion-text);
   }
 
   h4 {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-size-base);
+    font-size: 1rem;
     font-weight: 600;
-    line-height: var(--line-height-normal);
-    color: var(--color-notion-gray-900);
-    margin: 0;
+    line-height: 1.5;
+    color: var(--color-notion-text);
   }
 
   p {
-    margin: 0;
-    line-height: var(--line-height-relaxed);
-  }
-}
-
-/* Notion-style Components */
-@layer components {
-  /* Card */
-  .notion-card {
-    background: var(--color-notion-white);
-    border: 1px solid var(--color-notion-gray-100);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-base);
-  }
-
-  .notion-card:hover {
-    background: var(--color-notion-gray-50);
-    border-color: var(--color-notion-gray-200);
-  }
-
-  /* Interactive Card (clickable) */
-  .notion-card-interactive {
-    cursor: pointer;
-    position: relative;
-  }
-
-  .notion-card-interactive:hover {
-    box-shadow: var(--shadow-md);
-  }
-
-  .notion-card-interactive:active {
-    transform: translateY(1px);
-  }
-
-  /* Selected state */
-  .notion-card-selected {
-    border-color: var(--color-notion-blue);
-    background: var(--color-notion-blue-bg);
-  }
-
-  /* Button - Primary */
-  .notion-btn-primary {
-    background: var(--color-notion-blue);
-    color: white;
-    border: none;
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-4);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-base);
-  }
-
-  .notion-btn-primary:hover {
-    background: #1a6fbf;
-  }
-
-  .notion-btn-primary:active {
-    transform: translateY(1px);
-  }
-
-  /* Button - Secondary (ghost) */
-  .notion-btn-secondary {
-    background: transparent;
-    color: var(--color-notion-gray-700);
-    border: 1px solid var(--color-notion-gray-100);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-4);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-base);
-  }
-
-  .notion-btn-secondary:hover {
-    background: var(--color-notion-gray-50);
-  }
-
-  /* Input / Select */
-  .notion-input {
-    background: var(--color-notion-white);
-    border: 1px solid var(--color-notion-gray-100);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-3);
-    font-size: var(--font-size-sm);
-    color: var(--color-notion-gray-900);
-    transition: all var(--transition-base);
-    width: 100%;
-  }
-
-  .notion-input:hover {
-    border-color: var(--color-notion-gray-200);
-  }
-
-  .notion-input:focus {
-    outline: none;
-    border-color: var(--color-notion-blue);
-    box-shadow: 0 0 0 3px var(--color-notion-blue-bg);
-  }
-
-  /* Chip / Tag */
-  .notion-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--spacing-1) var(--spacing-2);
-    background: var(--color-notion-gray-50);
-    border: 1px solid var(--color-notion-gray-100);
-    border-radius: var(--radius-sm);
-    font-size: var(--font-size-xs);
-    font-weight: 500;
-    color: var(--color-notion-gray-700);
-  }
-
-  .notion-chip-blue {
-    background: var(--color-notion-blue-bg);
-    border-color: var(--color-notion-blue);
-    color: var(--color-notion-blue);
-  }
-
-  .notion-chip-green {
-    background: var(--color-notion-green-bg);
-    border-color: var(--color-notion-green);
-    color: var(--color-notion-green);
-  }
-
-  /* Divider */
-  .notion-divider {
-    height: 1px;
-    background: var(--color-notion-gray-100);
-    margin: var(--spacing-6) 0;
-  }
-
-  /* Section Header */
-  .notion-section-header {
-    font-size: var(--font-size-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-notion-gray-400);
-    margin-bottom: var(--spacing-3);
+    line-height: 1.6;
   }
 }
 
 /* Utility Classes */
-@layer utilities {
-  .text-secondary {
-    color: var(--color-notion-gray-400);
+@layer components {
+  /* Card */
+  .notion-card {
+    background: var(--color-notion-bg);
+    border: 1px solid var(--color-notion-border);
+    border-radius: var(--radius-lg);
+    transition: all 150ms ease-out;
   }
 
-  .text-muted {
-    color: var(--color-notion-gray-500);
+  .notion-card:hover {
+    box-shadow: var(--shadow-sm);
   }
 
-  .bg-page {
-    background-color: var(--color-notion-white);
+  /* Interactive Card */
+  .notion-card-interactive {
+    cursor: pointer;
+    background: var(--color-notion-bg);
+    border: 1px solid var(--color-notion-border);
+    border-radius: var(--radius-lg);
+    transition: all 150ms ease-out;
   }
 
-  .bg-subtle {
-    background-color: var(--color-notion-gray-50);
+  .notion-card-interactive:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: var(--color-notion-border-strong);
   }
+
+  .notion-card-interactive:active {
+    transform: scale(0.98);
+  }
+
+  .notion-card-selected {
+    border: 2px solid var(--color-notion-accent);
+    background: var(--color-notion-accent-bg);
+  }
+
+  /* Button Primary */
+  .notion-btn {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: all 150ms ease-out;
+    cursor: pointer;
+    border: none;
+  }
+
+  .notion-btn-primary {
+    background: var(--color-notion-accent);
+    color: white;
+  }
+
+  .notion-btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  .notion-btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  /* Button Secondary */
+  .notion-btn-secondary {
+    background: transparent;
+    color: var(--color-notion-text);
+    border: 1px solid var(--color-notion-border);
+  }
+
+  .notion-btn-secondary:hover {
+    background: var(--color-notion-bg-hover);
+  }
+
+  /* Input/Select */
+  .notion-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    background: white;
+    border: 1px solid var(--color-notion-border);
+    border-radius: var(--radius-md);
+    color: var(--color-notion-text);
+    transition: all 150ms ease-out;
+  }
+
+  .notion-input:hover {
+    border-color: var(--color-notion-border-strong);
+  }
+
+  .notion-input:focus {
+    outline: none;
+    border-color: var(--color-notion-accent);
+    box-shadow: 0 0 0 3px var(--color-notion-accent-light);
+  }
+
+  /* Tag/Chip Base */
+  .notion-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+
+  /* Section Header */
+  .notion-section-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-notion-text-secondary);
+  }
+}
+
+/* Scrollbar Styling */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(55, 53, 47, 0.2);
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(55, 53, 47, 0.3);
 }
